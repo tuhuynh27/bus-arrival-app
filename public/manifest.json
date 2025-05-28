@@ -1,0 +1,23 @@
+{
+  "name": "SG Bus Arrival",
+  "short_name": "Bus Arrival",
+  "description": "Real-time bus arrival tracking for Singapore",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "scope": "/",
+  "icons": [
+    {
+      "src": "/bus.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/bus.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
