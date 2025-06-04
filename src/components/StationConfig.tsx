@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Input } from './ui/input';
 import { Button } from './ui/button';
@@ -71,7 +71,7 @@ export function StationConfigComponent({
     return mappingArrays;
   };
 
-  const stationToBusNumbers = getStationToBusNumbers();
+  const stationToBusNumbers = useMemo(() => getStationToBusNumbers(), [servicesData]);
 
   const handleStationInputChange = (value: string) => {
     setNewStationInput(value);
