@@ -4,6 +4,6 @@
     "types": ["vitest/globals"],
     "noEmit": true
   },
-  "include": ["src"],
+  "include": ["src", "netlify"],
   "exclude": []
 }
