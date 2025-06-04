@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest'
-import { fetchBusArrivals } from '../src/services/api'
+import { fetchBusArrivals } from './api'
 
 const sample = {
   services: [

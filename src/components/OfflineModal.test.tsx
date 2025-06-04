@@ -1,5 +1,5 @@
 import { render, fireEvent } from '@testing-library/react'
-import { OfflineModal } from '../src/components/OfflineModal'
+import { OfflineModal } from './OfflineModal'
 
 describe('OfflineModal', () => {
   it('renders when offline and triggers retry', async () => {

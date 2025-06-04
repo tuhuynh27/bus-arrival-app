@@ -1,5 +1,5 @@
 import { render } from '@testing-library/react'
-import { BusArrivalCard } from '../src/components/BusArrivalCard'
+import { BusArrivalCard } from './BusArrivalCard'
 
 describe('BusArrivalCard', () => {
   it('renders bus number', () => {

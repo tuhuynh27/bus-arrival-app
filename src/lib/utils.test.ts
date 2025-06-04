@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest'
-import { cn, timeoutSignal } from '../src/lib/utils'
+import { cn, timeoutSignal } from './utils'
 
 describe('cn', () => {
   it('merges class names', () => {

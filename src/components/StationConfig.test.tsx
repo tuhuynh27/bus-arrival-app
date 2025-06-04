@@ -1,5 +1,5 @@
 import { render } from '@testing-library/react'
-import { StationConfigComponent } from '../src/components/StationConfig'
+import { StationConfigComponent } from './StationConfig'
 
 describe('StationConfigComponent', () => {
   it('renders heading', () => {

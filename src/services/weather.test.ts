@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest'
-import { fetchWeather, DEFAULT_LOCATION } from '../src/services/weather'
+import { fetchWeather, DEFAULT_LOCATION } from './weather'
 
 const sample = {
   hourly: {

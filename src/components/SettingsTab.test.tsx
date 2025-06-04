@@ -1,5 +1,5 @@
 import { render } from '@testing-library/react'
-import { SettingsTab } from '../src/components/SettingsTab'
+import { SettingsTab } from './SettingsTab'
 
 const props = {
   theme: 'light' as const,

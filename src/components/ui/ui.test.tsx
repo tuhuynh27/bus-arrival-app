@@ -1,9 +1,9 @@
 import { render } from '@testing-library/react'
-import { Badge } from '../src/components/ui/badge'
-import { Button } from '../src/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '../src/components/ui/card'
-import { Input } from '../src/components/ui/input'
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '../src/components/ui/tabs'
+import { Badge } from './badge'
+import { Button } from './button'
+import { Card, CardContent, CardHeader, CardTitle } from './card'
+import { Input } from './input'
+import { Tabs, TabsList, TabsTrigger, TabsContent } from './tabs'
 
 describe('UI components render', () => {
   it('Badge', () => {

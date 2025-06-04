@@ -1,5 +1,5 @@
 import { renderHook, act } from '@testing-library/react'
-import { useOfflineDetection } from '../src/hooks/useOfflineDetection'
+import { useOfflineDetection } from './useOfflineDetection'
 import { vi } from 'vitest'
 
 describe('useOfflineDetection', () => {

@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest'
-import { urlBase64ToUint8Array, requestPushSubscription, schedulePush } from '../src/services/push'
+import { urlBase64ToUint8Array, requestPushSubscription, schedulePush } from './push'
 
 const sampleKey = 'AQAB'
 

@@ -1,5 +1,5 @@
 import { render } from '@testing-library/react'
-import { NotificationsTab } from '../src/components/NotificationsTab'
+import { NotificationsTab } from './NotificationsTab'
 
 describe('NotificationsTab', () => {
   it('renders heading', () => {

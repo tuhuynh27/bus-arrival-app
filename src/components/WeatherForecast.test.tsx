@@ -1,7 +1,7 @@
 import { render, waitFor } from '@testing-library/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { WeatherForecast } from '../src/components/WeatherForecast'
-import * as weatherService from '../src/services/weather'
+import { WeatherForecast } from './WeatherForecast'
+import * as weatherService from '@/services/weather'
 
 const queryClient = new QueryClient()
 

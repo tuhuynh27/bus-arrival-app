@@ -1,7 +1,7 @@
 import { render } from '@testing-library/react'
 import { vi } from 'vitest'
-vi.mock('../src/assets/bus.png', () => ({ default: '' }))
-import { About } from '../src/components/About'
+vi.mock('../assets/bus.png', () => ({ default: '' }))
+import { About } from './About'
 
 describe('About', () => {
   it('renders title', () => {

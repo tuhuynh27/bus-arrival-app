@@ -1,5 +1,5 @@
 import { render, fireEvent } from '@testing-library/react'
-import { BottomNavigation } from '../src/components/BottomNavigation'
+import { BottomNavigation } from './BottomNavigation'
 
 describe('BottomNavigation', () => {
   it('calls onTabChange when clicked', () => {
