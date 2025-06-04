@@ -11,6 +11,7 @@
     "test": "vitest run"
   },
   "dependencies": {
+    "@netlify/blobs": "^9.1.5",
     "@netlify/functions": "^4.1.2",
     "@radix-ui/react-slot": "^1.2.3",
     "@radix-ui/react-tabs": "^1.1.12",
