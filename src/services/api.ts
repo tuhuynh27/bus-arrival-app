@@ -1,4 +1,5 @@
 import type { BusArrival } from '../types';
+import { timeoutSignal } from '../lib/utils';
 
 // Define types for the bus API response
 interface BusService {
@@ -38,7 +39,7 @@ export const fetchBusArrivals = async (stationId: string, busNumbers: string[]):
 
     // Use the actual Singapore bus API from arrivelah2.busrouter.sg
     const response = await fetch(`https://arrivelah2.busrouter.sg/?id=${stationId}`, {
-      signal: AbortSignal.timeout(10000), // 10 second timeout
+      signal: timeoutSignal(10000), // 10 second timeout
     });
     
     if (!response.ok) {
