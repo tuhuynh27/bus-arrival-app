@@ -17,4 +17,12 @@ describe('useLocalStorage', () => {
     act(() => first.result.current[1](1))
     expect(second.result.current[0]).toBe(1)
   })
+
+  it('does not react to other keys', () => {
+    window.localStorage.clear()
+    const first = renderHook(() => useLocalStorage('a', 0))
+    const second = renderHook(() => useLocalStorage('b', 0))
+    act(() => first.result.current[1](1))
+    expect(second.result.current[0]).toBe(0)
+  })
 })

@@ -115,8 +115,6 @@ function AppContent() {
       case 'settings':
         return (
           <SettingsTab
-            theme={theme}
-            toggleTheme={toggleTheme}
             stationConfigs={stationConfigs}
             setStationConfigs={setStationConfigs}
             stopsData={stopsDataTyped}
