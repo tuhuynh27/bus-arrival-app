@@ -3,17 +3,15 @@ import { Card, CardHeader, CardTitle, CardContent } from './ui/card'
 import { Button } from './ui/button'
 import { Input } from './ui/input'
 import { PasscodeModal } from './PasscodeModal'
-import { Sun, Moon } from 'lucide-react'
 import { toast } from 'sonner'
+import { format } from 'date-fns'
 import { StationConfigComponent } from './StationConfig'
 import { useLocalStorage } from '../hooks/useLocalStorage'
 import { fetchUserSettings, saveUserSettings } from '../services/user'
 import { checkUser, register, login } from '../services/auth'
-import type { StationConfig, Theme, StopData, ServiceData } from '../types'
+import type { StationConfig, StopData, ServiceData } from '../types'
 
 interface SettingsTabProps {
-  theme: Theme;
-  toggleTheme: () => void;
   stationConfigs: StationConfig[];
   setStationConfigs: (configs: StationConfig[]) => void;
   stopsData: StopData;
@@ -21,8 +19,6 @@ interface SettingsTabProps {
 }
 
 export function SettingsTab({
-  theme,
-  toggleTheme,
   stationConfigs,
   setStationConfigs,
   stopsData,
@@ -31,6 +27,7 @@ export function SettingsTab({
   const [email, setEmail] = useLocalStorage<string>('userEmail', '')
   const [emailInput, setEmailInput] = useState(email)
   const [authToken, setAuthToken] = useLocalStorage<string>('authToken', '')
+  const [lastSync, setLastSync] = useLocalStorage<number>('lastSync', 0)
   const [pendingEmail, setPendingEmail] = useState('')
   const [modalMode, setModalMode] = useState<'enter' | 'setup' | null>(null)
 
@@ -50,7 +47,6 @@ export function SettingsTab({
       if (payload.exp * 1000 > Date.now()) {
         setEmail(payload.email)
         setEmailInput(payload.email)
-        await completeLogin(payload.email, authToken)
         return
       }
     } catch {
@@ -73,8 +69,8 @@ export function SettingsTab({
       const data = await fetchUserSettings(userEmail, token)
       if (data) {
         setStationConfigs(data)
+        setLastSync(Date.now())
       }
-      toast.success('Settings synced')
     } catch {
       toast.error('Failed to load settings')
     }
@@ -93,13 +89,15 @@ export function SettingsTab({
     }
   }
 
-  useEffect(() => {
-    if (email && authToken) {
-      saveUserSettings(email, authToken, stationConfigs).catch(() => {
-        toast.error('Failed to sync settings')
-      })
+  const handleSync = async () => {
+    if (!email || !authToken) return
+    try {
+      await saveUserSettings(email, authToken, stationConfigs)
+      setLastSync(Date.now())
+    } catch {
+      toast.error('Failed to sync settings')
     }
-  }, [stationConfigs, email, authToken])
+  }
 
   return (
     <div className="space-y-3 pb-6">
@@ -114,18 +112,29 @@ export function SettingsTab({
         </CardHeader>
         <CardContent className="pt-0">
           {email ? (
-            <div className="flex items-center justify-between gap-2">
-              <span className="text-sm break-all">{email}</span>
-              <Button
-                size="sm"
-                variant="outline"
-                onClick={() => {
-                  setEmail('')
-                  setAuthToken('')
-                }}
-              >
-                Log out
-              </Button>
+            <div className="space-y-2">
+              <div className="flex items-center justify-between gap-2">
+                <span className="text-sm break-all">{email}</span>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => {
+                    setEmail('')
+                    setAuthToken('')
+                  }}
+                >
+                  Log out
+                </Button>
+              </div>
+              <div className="flex items-center justify-between gap-2">
+                <span className="text-sm text-muted-foreground">
+                  Last sync:{' '}
+                  {lastSync ? format(lastSync, 'PP p') : 'Never'}
+                </span>
+                <Button size="sm" onClick={handleSync}>
+                  Sync now
+                </Button>
+              </div>
             </div>
           ) : (
             <form onSubmit={handleLogin} className="flex gap-2">
@@ -139,30 +148,6 @@ export function SettingsTab({
               <Button type="submit" size="sm">Login</Button>
             </form>
           )}
-        </CardContent>
-      </Card>
-      {/* Theme Toggle */}
-      <Card>
-        <CardHeader className="pb-2">
-          <CardTitle className="flex items-center text-base">
-            <Sun className="mr-2 w-4 h-4" />
-            Theme
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="pt-0">
-          <Button onClick={toggleTheme} variant="outline" className="w-full">
-            {theme === 'light' ? (
-              <>
-                <Moon className="w-4 h-4 mr-2" />
-                Switch to Dark Mode
-              </>
-            ) : (
-              <>
-                <Sun className="w-4 h-4 mr-2" />
-                Switch to Light Mode
-              </>
-            )}
-          </Button>
         </CardContent>
       </Card>
       {/* Station Configuration */}
