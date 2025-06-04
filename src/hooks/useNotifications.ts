@@ -4,7 +4,7 @@ import type { BusArrival } from '../types'
 import { usePendingNotifications } from './usePendingNotifications'
 
 export function useNotifications() {
-  const { addNotification } = usePendingNotifications()
+  const { addNotification, removeNotification } = usePendingNotifications()
 
   const notifyBus = async (bus: BusArrival) => {
     const remainingTime = bus.arrivalTimestamp - Date.now()
@@ -30,7 +30,10 @@ export function useNotifications() {
       },
       delay,
     )
-    addNotification({ id: `${bus.busNo}-${Date.now()}`, busNo: bus.busNo, targetTime: Date.now() + delay })
+    const id = `${bus.busNo}-${Date.now()}`
+    const targetTime = Date.now() + delay
+    addNotification({ id, busNo: bus.busNo, targetTime })
+    setTimeout(() => removeNotification(id), delay + 1000)
     toast.success(`Notification set for Bus ${bus.busNo} (${minutes} min)`)
   }
 

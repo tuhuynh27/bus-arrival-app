@@ -13,7 +13,8 @@ const mockedSchedule = schedulePush as unknown as any
 
 describe('useNotifications', () => {
   it('schedules and saves notification', async () => {
-    mockedUsePending.mockReturnValue({ addNotification: vi.fn() })
+    vi.useFakeTimers()
+    mockedUsePending.mockReturnValue({ addNotification: vi.fn(), removeNotification: vi.fn() })
     mockedRequest.mockResolvedValue({})
     const { result } = renderHook(() => useNotifications())
     const bus = { busNo: '10', arrivalTimestamp: Date.now() + 60000 } as any
@@ -22,11 +23,15 @@ describe('useNotifications', () => {
     })
     expect(mockedSchedule).toHaveBeenCalled()
     expect(mockedUsePending.mock.results[0].value.addNotification).toHaveBeenCalledTimes(1)
+    // run all timers to trigger cleanup
+    vi.runAllTimers()
+    expect(mockedUsePending.mock.results[0].value.removeNotification).toHaveBeenCalledTimes(1)
+    vi.useRealTimers()
   })
 
   it('adds notification once per call', async () => {
     const addNotification = vi.fn()
-    mockedUsePending.mockReturnValue({ addNotification })
+    mockedUsePending.mockReturnValue({ addNotification, removeNotification: vi.fn() })
     mockedRequest.mockResolvedValue({})
     const { result } = renderHook(() => useNotifications())
     const bus = { busNo: '10', arrivalTimestamp: Date.now() + 60000 } as any
