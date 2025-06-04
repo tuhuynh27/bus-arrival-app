@@ -6,6 +6,7 @@ import { About } from './components/About';
 import { OfflineModal } from './components/OfflineModal';
 import { useLocalStorage } from './hooks/useLocalStorage';
 import { useOfflineDetection } from './hooks/useOfflineDetection';
+import { usePendingNotifications } from './hooks/usePendingNotifications';
 import type { StationConfig, TabType, Theme, StopData, ServiceData, BusArrival } from './types';
 import './App.css';
 import { HomeTab } from './components/HomeTab';
@@ -39,6 +40,8 @@ function AppContent() {
     { stationId: '10389', busNumbers: ['121', '122'] },
     { stationId: '10161', busNumbers: ['121', '122'] },
   ]);
+
+  const { addNotification } = usePendingNotifications();
 
   // Offline detection
   const { isOffline, isRetrying, retryCount, lastRetryTime, manualRetry } = useOfflineDetection();
@@ -79,7 +82,8 @@ function AppContent() {
       return;
     }
 
-    const delay = Math.max(remainingTime - 60000, 0); // notify about 1 min before
+    const notifyBefore = 2 * 60 * 1000; // 2 minutes
+    const delay = Math.max(remainingTime - notifyBefore, 0);
     await schedulePush(
       subscription,
       {
@@ -88,6 +92,7 @@ function AppContent() {
       },
       delay,
     );
+    addNotification({ id: `${bus.busNo}-${Date.now()}`, busNo: bus.busNo, targetTime: Date.now() + delay });
     toast.success(`Notification set for Bus ${bus.busNo} (${minutes} min)`);
   };
 
