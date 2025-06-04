@@ -9,4 +9,12 @@ describe('useLocalStorage', () => {
     act(() => result.current[1]('b'))
     expect(window.localStorage.getItem('x')).toBe('"b"')
   })
+
+  it('syncs across hook instances', () => {
+    window.localStorage.clear()
+    const first = renderHook(() => useLocalStorage('y', 0))
+    const second = renderHook(() => useLocalStorage('y', 0))
+    act(() => first.result.current[1](1))
+    expect(second.result.current[0]).toBe(1)
+  })
 })
