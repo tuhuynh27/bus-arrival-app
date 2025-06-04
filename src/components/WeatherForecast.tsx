@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { format } from 'date-fns'
 import { Sun, Cloud, CloudRain, CloudSnow, CloudDrizzle, CloudLightning, CloudFog } from 'lucide-react'
-import { Card, CardContent, CardHeader, CardTitle } from './ui/card'
+import { Card, CardContent } from './ui/card'
 import type { WeatherData } from '../services/weather'
 import { fetchWeather, DEFAULT_LOCATION } from '../services/weather'
 
@@ -24,15 +24,12 @@ export function WeatherForecast() {
   })
 
   return (
-    <Card className="py-2 gap-2">
-      <CardHeader className="py-1 pb-1">
-        <CardTitle className="text-sm leading-tight">Weather (next 2h)</CardTitle>
-      </CardHeader>
-      <CardContent className="pt-0 pb-2 text-xs">
+    <Card className="p-3 gap-2">
+      <CardContent className="p-0 text-xs">
         {isLoading ? (
           <div className="flex justify-around animate-pulse gap-3">
-            {[1, 2].map((i) => (
-              <div key={i} className="flex flex-col items-center space-y-0.5">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="flex flex-col items-center gap-0.5">
                 <div className="w-4 h-4 rounded-full bg-muted" />
                 <div className="w-7 h-2.5 rounded bg-muted" />
                 <div className="w-6 h-2.5 rounded bg-muted" />
@@ -44,19 +41,23 @@ export function WeatherForecast() {
             Failed to load weather
           </div>
         ) : (
-          <div className="flex justify-around gap-3">
-            {data.time.map((t, idx) => {
+          <div className="flex justify-around gap-2">
+            {data.time.slice(0, 3).map((t, idx) => {
               const { Icon } = weatherIcon(data.weathercode[idx])
               const temp = Math.round(data.temperature_2m[idx])
               const precip = data.precipitation_probability?.[idx]
               return (
-                <div key={t} className="flex flex-col items-center">
-                  <Icon className="w-4 h-4 mb-0.5" />
-                  <div>{format(new Date(t), 'ha')}</div>
-                  <div>{temp}&deg;C</div>
-                  {precip != null && (
-                    <div className="text-[10px] text-muted-foreground">{precip}%</div>
-                  )}
+                <div key={t} className="flex flex-col items-center gap-1">
+                  <div className="flex items-center gap-1">
+                    <Icon className="w-3.5 h-3.5" />
+                    <span>{format(new Date(t), 'ha')}</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <span>{temp}&deg;C</span>
+                    {precip != null && (
+                      <span className="text-[10px] text-muted-foreground">{precip}%</span>
+                    )}
+                  </div>
                 </div>
               )
             })}
