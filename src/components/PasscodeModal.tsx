@@ -66,7 +66,12 @@ export function PasscodeModal({ mode, open, onSubmit, onClose }: PasscodeModalPr
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pin, confirm, step, mode, open])
 
-  const title = mode === 'setup' ? (step === 0 ? 'Set Passcode' : 'Confirm Passcode') : 'Enter Passcode'
+  const title =
+    mode === 'setup' ? (step === 0 ? 'Set Passcode' : 'Confirm Passcode') : 'Enter Passcode'
+
+  if (!open) {
+    return null
+  }
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
@@ -76,13 +81,27 @@ export function PasscodeModal({ mode, open, onSubmit, onClose }: PasscodeModalPr
         </CardHeader>
         <CardContent className="pt-0 space-y-4">
           {mode === 'setup' && step === 1 ? (
-            <InputOTP value={confirm} onChange={setConfirm} autoFocus length={4} className="mx-auto" />
+            <InputOTP
+              value={confirm}
+              onChange={setConfirm}
+              autoFocus
+              length={4}
+              className="mx-auto"
+            />
           ) : (
-            <InputOTP value={pin} onChange={setPin} autoFocus length={4} className="mx-auto" />
+            <InputOTP
+              value={pin}
+              onChange={setPin}
+              autoFocus
+              length={4}
+              className="mx-auto"
+            />
           )}
           {error && <p className="text-red-600 text-center text-sm">{error}</p>}
           <div className="flex justify-center gap-2">
-            <Button className="w-20" variant="outline" onClick={onClose}>Cancel</Button>
+            <Button className="w-20" variant="outline" onClick={onClose}>
+              Cancel
+            </Button>
             <Button className="w-20" onClick={handlePrimary}>OK</Button>
           </div>
         </CardContent>
