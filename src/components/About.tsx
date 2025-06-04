@@ -14,10 +14,12 @@ export function About() {
             {/* Animated background pattern */}
             <div className="absolute inset-0 opacity-10">
               <div className="absolute top-4 left-4 animate-pulse">
-                <img 
-                  src={busIcon} 
-                  alt="Bus" 
+                <img
+                  src={busIcon}
+                  alt="Bus"
                   className="w-8 h-8 bg-white dark:bg-gray-800 rounded p-1"
+                  draggable={false}
+                  onContextMenu={(e) => e.preventDefault()}
                 />
               </div>
               <div className="absolute top-8 right-8 animate-bounce">
@@ -31,10 +33,12 @@ export function About() {
             <div className="relative z-10">
               <div className="mb-4">
                 <div className="w-16 h-16 bg-white dark:bg-gray-800 rounded-xl shadow-lg p-2 mx-auto mb-2">
-                  <img 
-                    src={busIcon} 
-                    alt="SG Bus Logo" 
+                  <img
+                    src={busIcon}
+                    alt="SG Bus Logo"
                     className="w-full h-full object-contain"
+                    draggable={false}
+                    onContextMenu={(e) => e.preventDefault()}
                   />
                 </div>
               </div>

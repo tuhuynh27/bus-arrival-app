@@ -154,10 +154,12 @@ export function HomeTab({
         <div className="flex items-center gap-3">
           {/* Bus Logo */}
           <div className="flex items-center justify-center w-10 h-10 bg-gray-100 dark:bg-gray-800 rounded-xl p-1">
-            <img 
+            <img
               src={busIcon}
-              alt="Bus Logo" 
+              alt="Bus Logo"
               className="w-full h-full object-contain"
+              draggable={false}
+              onContextMenu={(e) => e.preventDefault()}
             />
           </div>
           {/* App Title */}

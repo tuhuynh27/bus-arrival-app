@@ -15,7 +15,10 @@ export function BottomNavigation({ activeTab, onTabChange }: BottomNavigationPro
   ];
 
   return (
-    <nav className="fixed bottom-0 left-1/2 transform -translate-x-1/2 w-full max-w-[480px] bg-background/95 backdrop-blur-xl border-t border-border/50 z-50 pb-safe" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
+    <nav
+      className="fixed bottom-0 left-1/2 transform -translate-x-1/2 w-full max-w-[480px] bg-background/95 backdrop-blur-xl border-t border-border/50 z-50"
+      style={{ paddingBottom: 'calc(env(safe-area-inset-bottom) / 2)' }}
+    >
       <div className="flex justify-around items-center py-2 px-4">
         {tabs.map((tab) => {
           const Icon = tab.icon;

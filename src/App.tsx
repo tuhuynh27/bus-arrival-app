@@ -160,7 +160,12 @@ function AppContent() {
       {/* Bottom Navigation */}
       <BottomNavigation activeTab={activeTab} onTabChange={setActiveTab} />
       {/* Toast Container */}
-      <Toaster richColors position="top-center" />
+      <Toaster
+        richColors
+        position="top-center"
+        offset={{ top: 'calc(env(safe-area-inset-top) + 8px)' }}
+        mobileOffset={{ top: 'calc(env(safe-area-inset-top) + 8px)' }}
+      />
       {/* Offline Modal */}
       <OfflineModal
         isOffline={isOffline}
