@@ -43,13 +43,14 @@ export function SettingsTab({
     return JSON.parse(atob(padded)) as { email: string; exp: number }
   }
 
-  const verifyExistingToken = () => {
+  const verifyExistingToken = async () => {
     if (!authToken) return
     try {
       const payload = decodeJwt(authToken)
       if (payload.exp * 1000 > Date.now()) {
         setEmail(payload.email)
         setEmailInput(payload.email)
+        await completeLogin(payload.email, authToken)
         return
       }
     } catch {
@@ -62,14 +63,14 @@ export function SettingsTab({
   }
 
   useEffect(() => {
-    verifyExistingToken()
+    verifyExistingToken().catch(() => {})
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const completeLogin = async (userEmail: string) => {
+  const completeLogin = async (userEmail: string, token: string) => {
     setEmail(userEmail)
     try {
-      const data = await fetchUserSettings(userEmail)
+      const data = await fetchUserSettings(userEmail, token)
       if (data) {
         setStationConfigs(data)
       }
@@ -93,12 +94,12 @@ export function SettingsTab({
   }
 
   useEffect(() => {
-    if (email) {
-      saveUserSettings(email, stationConfigs).catch(() => {
+    if (email && authToken) {
+      saveUserSettings(email, authToken, stationConfigs).catch(() => {
         toast.error('Failed to sync settings')
       })
     }
-  }, [stationConfigs, email])
+  }, [stationConfigs, email, authToken])
 
   return (
     <div className="space-y-3 pb-6">
@@ -187,7 +188,7 @@ export function SettingsTab({
                 : await login(pendingEmail, pin)
             setModalMode(null)
             setAuthToken(token)
-            await completeLogin(pendingEmail)
+            await completeLogin(pendingEmail, token)
           } catch (err) {
             const message =
               err instanceof Error ? err.message : 'Authentication failed'
