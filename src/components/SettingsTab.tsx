@@ -94,6 +94,7 @@ export function SettingsTab({
     try {
       await saveUserSettings(email, authToken, stationConfigs)
       setLastSync(Date.now())
+      toast.success('Settings synced')
     } catch {
       toast.error('Failed to sync settings')
     }

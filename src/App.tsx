@@ -42,6 +42,17 @@ function AppContent() {
 
   const { notifyBus } = useNotifications();
 
+  // Scroll to top whenever the active tab changes
+  useEffect(() => {
+    if (typeof window !== 'undefined' && 'scrollTo' in window) {
+      try {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } catch {
+        /* ignore scroll errors in tests */
+      }
+    }
+  }, [activeTab]);
+
   // Offline detection
   const { isOffline, isRetrying, retryCount, lastRetryTime, manualRetry } = useOfflineDetection();
 
