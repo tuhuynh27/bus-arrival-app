@@ -10,11 +10,11 @@ export function usePendingNotifications() {
   const [notifications, setNotifications] = useLocalStorage<PendingNotification[]>('pendingNotifications', [])
 
   const addNotification = (notification: PendingNotification) => {
-    setNotifications([...notifications, notification])
+    setNotifications(prev => [...prev, notification])
   }
 
   const removeNotification = (id: string) => {
-    setNotifications(notifications.filter(n => n.id !== id))
+    setNotifications(prev => prev.filter(n => n.id !== id))
   }
 
   const clearNotifications = () => {

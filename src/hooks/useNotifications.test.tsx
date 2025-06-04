@@ -21,6 +21,21 @@ describe('useNotifications', () => {
       await result.current.notifyBus(bus)
     })
     expect(mockedSchedule).toHaveBeenCalled()
-    expect(mockedUsePending.mock.results[0].value.addNotification).toHaveBeenCalled()
+    expect(mockedUsePending.mock.results[0].value.addNotification).toHaveBeenCalledTimes(1)
+  })
+
+  it('adds notification once per call', async () => {
+    const addNotification = vi.fn()
+    mockedUsePending.mockReturnValue({ addNotification })
+    mockedRequest.mockResolvedValue({})
+    const { result } = renderHook(() => useNotifications())
+    const bus = { busNo: '10', arrivalTimestamp: Date.now() + 60000 } as any
+    await act(async () => {
+      await result.current.notifyBus(bus)
+    })
+    await act(async () => {
+      await result.current.notifyBus(bus)
+    })
+    expect(addNotification).toHaveBeenCalledTimes(2)
   })
 })
