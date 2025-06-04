@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { format } from 'date-fns'
 import { Sun, Cloud, CloudRain, CloudSnow, CloudDrizzle, CloudLightning, CloudFog } from 'lucide-react'
-import { Card, CardContent, CardHeader, CardTitle } from './ui/card'
+import { Card, CardContent } from './ui/card'
 import type { WeatherData } from '../services/weather'
 import { fetchWeather, DEFAULT_LOCATION } from '../services/weather'
 
@@ -25,13 +25,10 @@ export function WeatherForecast() {
 
   return (
     <Card className="p-3 gap-2">
-      <CardHeader className="pb-1">
-        <CardTitle className="text-sm leading-tight">Weather (next 2h)</CardTitle>
-      </CardHeader>
-      <CardContent className="pt-0 pb-1 text-xs">
+      <CardContent className="p-0 text-xs">
         {isLoading ? (
           <div className="flex justify-around animate-pulse gap-3">
-            {[1, 2].map((i) => (
+            {[1, 2, 3].map((i) => (
               <div key={i} className="flex flex-col items-center gap-0.5">
                 <div className="w-4 h-4 rounded-full bg-muted" />
                 <div className="w-7 h-2.5 rounded bg-muted" />
@@ -45,7 +42,7 @@ export function WeatherForecast() {
           </div>
         ) : (
           <div className="flex justify-around gap-2">
-            {data.time.map((t, idx) => {
+            {data.time.slice(0, 3).map((t, idx) => {
               const { Icon } = weatherIcon(data.weathercode[idx])
               const temp = Math.round(data.temperature_2m[idx])
               const precip = data.precipitation_probability?.[idx]

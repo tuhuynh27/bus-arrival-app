@@ -22,7 +22,7 @@ export const fetchWeather = async (
 ): Promise<WeatherData> => {
   const url =
     `https://api.open-meteo.com/v1/forecast?latitude=${location.latitude}&longitude=${location.longitude}` +
-    '&hourly=temperature_2m,precipitation_probability,weathercode&forecast_hours=2' +
+    '&hourly=temperature_2m,precipitation_probability,weathercode&forecast_hours=3' +
     `&timezone=${encodeURIComponent(location.timezone ?? 'auto')}`
   const res = await fetch(url)
   if (!res.ok) {
