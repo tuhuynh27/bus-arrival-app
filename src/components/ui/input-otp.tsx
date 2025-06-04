@@ -45,7 +45,7 @@ export function InputOTP({ length = 4, value, onChange, autoFocus = false, class
   }
 
   return (
-    <div className={cn('flex gap-2', className)}>
+    <div className={cn('flex gap-2 justify-center', className)}>
       {values.map((digit, idx) => (
         <input
           key={idx}

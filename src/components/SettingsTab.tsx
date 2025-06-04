@@ -3,12 +3,12 @@ import { Card, CardHeader, CardTitle, CardContent } from './ui/card'
 import { Button } from './ui/button'
 import { Input } from './ui/input'
 import { PasscodeModal } from './PasscodeModal'
-import { jwtVerify, SignJWT } from 'jose'
 import { Sun, Moon } from 'lucide-react'
 import { toast } from 'sonner'
 import { StationConfigComponent } from './StationConfig'
 import { useLocalStorage } from '../hooks/useLocalStorage'
 import { fetchUserSettings, saveUserSettings } from '../services/user'
+import { checkUser, register, login } from '../services/auth'
 import type { StationConfig, Theme, StopData, ServiceData } from '../types'
 
 interface SettingsTabProps {
@@ -30,31 +30,27 @@ export function SettingsTab({
 }: SettingsTabProps) {
   const [email, setEmail] = useLocalStorage<string>('userEmail', '')
   const [emailInput, setEmailInput] = useState(email)
-  const [users, setUsers] = useLocalStorage<Record<string, string>>('users', {})
   const [authToken, setAuthToken] = useLocalStorage<string>('authToken', '')
   const [pendingEmail, setPendingEmail] = useState('')
   const [modalMode, setModalMode] = useState<'enter' | 'setup' | null>(null)
 
-  const secret = new TextEncoder().encode(import.meta.env.VITE_JWT_SECRET)
-
-  const generateToken = async (userEmail: string) => {
-    return new SignJWT({ email: userEmail })
-      .setProtectedHeader({ alg: 'HS256' })
-      .setExpirationTime('7d')
-      .sign(secret)
-  }
-
-  const verifyExistingToken = async () => {
+  const verifyExistingToken = () => {
     if (!authToken) return
     try {
-      const { payload } = await jwtVerify(authToken, secret)
-      const userEmail = payload.email as string
-      setEmail(userEmail)
-      setEmailInput(userEmail)
+      const payload = JSON.parse(atob(authToken.split('.')[1])) as {
+        email: string
+        exp: number
+      }
+      if (payload.exp * 1000 > Date.now()) {
+        setEmail(payload.email)
+        setEmailInput(payload.email)
+        return
+      }
     } catch {
-      setAuthToken('')
-      setEmail('')
+      /* ignore */
     }
+    setAuthToken('')
+    setEmail('')
   }
 
   useEffect(() => {
@@ -64,8 +60,6 @@ export function SettingsTab({
 
   const completeLogin = async (userEmail: string) => {
     setEmail(userEmail)
-    const token = await generateToken(userEmail)
-    setAuthToken(token)
     try {
       const data = await fetchUserSettings(userEmail)
       if (data) {
@@ -77,15 +71,16 @@ export function SettingsTab({
     }
   }
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     const value = emailInput.trim()
     if (!value) return
     setPendingEmail(value)
-    if (users[value]) {
-      setModalMode('enter')
-    } else {
-      setModalMode('setup')
+    try {
+      const exists = await checkUser(value)
+      setModalMode(exists ? 'enter' : 'setup')
+    } catch {
+      toast.error('Failed to check user')
     }
   }
 
@@ -176,14 +171,17 @@ export function SettingsTab({
           setPendingEmail('')
         }}
         onSubmit={async (pin) => {
-          if (modalMode === 'setup') {
-            setUsers({ ...users, [pendingEmail]: pin })
-          } else if (users[pendingEmail] !== pin) {
+          try {
+            const { token } =
+              modalMode === 'setup'
+                ? await register(pendingEmail, pin)
+                : await login(pendingEmail, pin)
+            setModalMode(null)
+            setAuthToken(token)
+            await completeLogin(pendingEmail)
+          } catch {
             toast.error('Incorrect passcode')
-            return
           }
-          setModalMode(null)
-          await completeLogin(pendingEmail)
         }}
       />
     </div>

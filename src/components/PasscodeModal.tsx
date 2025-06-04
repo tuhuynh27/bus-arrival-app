@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card'
 import { Button } from './ui/button'
 import { InputOTP } from './ui/input-otp'
@@ -14,6 +14,14 @@ export function PasscodeModal({ mode, open, onSubmit, onClose }: PasscodeModalPr
   const [step, setStep] = useState(0)
   const [pin, setPin] = useState('')
   const [confirm, setConfirm] = useState('')
+
+  useEffect(() => {
+    if (!open) {
+      setStep(0)
+      setPin('')
+      setConfirm('')
+    }
+  }, [open])
 
   if (!open) return null
 
@@ -47,7 +55,7 @@ export function PasscodeModal({ mode, open, onSubmit, onClose }: PasscodeModalPr
           ) : (
             <InputOTP value={pin} onChange={setPin} autoFocus length={4} className="mx-auto" />
           )}
-          <div className="flex gap-2">
+          <div className="flex gap-1">
             <Button className="flex-1" variant="outline" onClick={onClose}>Cancel</Button>
             <Button className="flex-1" onClick={handlePrimary}>OK</Button>
           </div>
