@@ -16,6 +16,9 @@ body {
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overscroll-behavior-y: none;
+  -webkit-overflow-scrolling: touch;
+  -webkit-tap-highlight-color: transparent;
 }
 
 /* Safe area support for iOS */
@@ -68,5 +71,18 @@ textarea {
   textarea:focus,
   input:focus {
     font-size: 16px;
+  }
+}
+
+/* Hide scrollbars on touch devices to mimic native apps */
+@media (hover: none) and (pointer: coarse) {
+  html,
+  body {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  html::-webkit-scrollbar,
+  body::-webkit-scrollbar {
+    display: none;
   }
 }
