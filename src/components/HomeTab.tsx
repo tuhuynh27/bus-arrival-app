@@ -5,6 +5,7 @@ import { Button } from './ui/button';
 import { Badge } from './ui/badge';
 import { BusArrivalCard } from './BusArrivalCard';
 import { RefreshCw, Sun, Moon, MapPin } from 'lucide-react';
+import { WeatherForecast } from './WeatherForecast';
 import type { StationConfig, Theme, StopData, ServiceData, BusArrival, TabType } from '../types';
 import busIcon from '@/assets/bus.png';
 import { fetchBusArrivals } from '../services/api';
@@ -182,6 +183,7 @@ export function HomeTab({
           </Button>
         </div>
       </div>
+      <WeatherForecast />
       {/* Bus Stations - Reduced spacing */}
       {stationConfigs.length === 0 ? (
         <Card>
