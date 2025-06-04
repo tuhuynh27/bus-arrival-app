@@ -157,7 +157,7 @@ export function StationConfigComponent({
         // Show warning but still allow adding (maybe for future routes)
         console.warn(`Bus ${newBusNumber} may not serve station ${stationId}`);
       }
-      
+
       const updatedConfigs = stationConfigs.map(s => {
         if (s.stationId === stationId && !s.busNumbers.includes(newBusNumber)) {
           return { ...s, busNumbers: [...s.busNumbers, newBusNumber] };
@@ -168,6 +168,18 @@ export function StationConfigComponent({
       setNewBusNumberInputs(inputs => ({ ...inputs, [stationId]: '' }));
       setBusNumberSuggestions(suggestions => ({ ...suggestions, [stationId]: [] }));
     }
+  };
+
+  const addBusNumberDirect = (stationId: string, busNo: string) => {
+    const updatedConfigs = stationConfigs.map(s => {
+      if (s.stationId === stationId && !s.busNumbers.includes(busNo)) {
+        return { ...s, busNumbers: [...s.busNumbers, busNo] };
+      }
+      return s;
+    });
+    onUpdateConfigs(updatedConfigs);
+    setNewBusNumberInputs(inputs => ({ ...inputs, [stationId]: '' }));
+    setBusNumberSuggestions(suggestions => ({ ...suggestions, [stationId]: [] }));
   };
 
   const removeBusNumber = (stationId: string, busNo: string) => {
@@ -186,8 +198,7 @@ export function StationConfigComponent({
   };
 
   const handleBusNumberSelect = (stationId: string, busNo: string) => {
-    setNewBusNumberInputs(inputs => ({ ...inputs, [stationId]: busNo }));
-    setBusNumberSuggestions(suggestionsObj => ({ ...suggestionsObj, [stationId]: [] }));
+    addBusNumberDirect(stationId, busNo);
   };
 
   return (
@@ -330,7 +341,7 @@ export function StationConfigComponent({
                         className="min-w-[40px] min-h-[40px] h-10 px-4 py-2 text-base cursor-pointer hover:bg-accent flex items-center justify-center rounded-lg"
                         onClick={() => {
                           if (!config.busNumbers.includes(busNo)) {
-                            setNewBusNumberInputs(inputs => ({ ...inputs, [config.stationId]: busNo }));
+                            addBusNumberDirect(config.stationId, busNo);
                           }
                         }}
                       >

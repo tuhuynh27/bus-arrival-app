@@ -12,6 +12,9 @@ A modern, mobile-first Progressive Web App (PWA) for real-time bus arrival track
 - 🔔 **Smart Notifications**: Web Push alerts when buses are approaching
 - 💾 **Offline Storage**: Your settings and favorite stops are saved locally
 - 🔄 **Auto-refresh**: Automatic data updates using TanStack Query
+- ⬆️ **Tab Top Scroll**: View resets to top whenever you switch tabs
+- ➕ **One-tap Bus Numbers**: Tap a bus number suggestion to add it instantly
+- ✅ **Sync Confirmation**: Toast shown when settings are synced
 - 📲 **PWA Support**: Install as a mobile app with offline caching
 - 🚀 **Fast Loading**: Bundled with comprehensive Singapore bus stop and route data
 
@@ -81,7 +84,7 @@ The built files will be in the `dist` directory.
 1. Go to the **Settings** tab
 2. Enter a station ID or search by name in the "Add Bus Station" section
 3. Click the + button to add the station
-4. For each station, add the bus numbers you want to track
+4. Tap any bus number in the suggestions or the list of available buses to add it instantly
 
 ### Getting Notifications
 
