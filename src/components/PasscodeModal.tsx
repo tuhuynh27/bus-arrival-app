@@ -82,6 +82,7 @@ export function PasscodeModal({ mode, open, onSubmit, onClose }: PasscodeModalPr
         <CardContent className="pt-0 space-y-4">
           {mode === 'setup' && step === 1 ? (
             <InputOTP
+              key="confirm"
               value={confirm}
               onChange={setConfirm}
               autoFocus
@@ -90,6 +91,7 @@ export function PasscodeModal({ mode, open, onSubmit, onClose }: PasscodeModalPr
             />
           ) : (
             <InputOTP
+              key="pin"
               value={pin}
               onChange={setPin}
               autoFocus
