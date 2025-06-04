@@ -34,13 +34,19 @@ export function SettingsTab({
   const [pendingEmail, setPendingEmail] = useState('')
   const [modalMode, setModalMode] = useState<'enter' | 'setup' | null>(null)
 
+  const decodeJwt = (token: string) => {
+    const base64 = token
+      .split('.')[1]
+      .replace(/-/g, '+')
+      .replace(/_/g, '/')
+    const padded = base64 + '='.repeat((4 - (base64.length % 4)) % 4)
+    return JSON.parse(atob(padded)) as { email: string; exp: number }
+  }
+
   const verifyExistingToken = () => {
     if (!authToken) return
     try {
-      const payload = JSON.parse(atob(authToken.split('.')[1])) as {
-        email: string
-        exp: number
-      }
+      const payload = decodeJwt(authToken)
       if (payload.exp * 1000 > Date.now()) {
         setEmail(payload.email)
         setEmailInput(payload.email)
@@ -179,8 +185,10 @@ export function SettingsTab({
             setModalMode(null)
             setAuthToken(token)
             await completeLogin(pendingEmail)
-          } catch {
-            toast.error('Incorrect passcode')
+          } catch (err) {
+            const message =
+              err instanceof Error ? err.message : 'Authentication failed'
+            toast.error(message)
           }
         }}
       />
