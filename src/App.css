@@ -19,11 +19,18 @@ body {
   overscroll-behavior-y: none;
   -webkit-overflow-scrolling: touch;
   -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 /* Safe area support for iOS */
 .pb-safe {
   padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* Safe area padding for the top iOS status bar */
+.pt-safe {
+  padding-top: env(safe-area-inset-top);
 }
 
 /* Custom scrollbar for webkit browsers */
@@ -51,11 +58,17 @@ body {
 }
 
 /* Ensure proper touch targets on mobile */
-button, 
-input, 
-select, 
+button,
+input,
+select,
 textarea {
   min-height: 44px;
+  user-select: auto;
+}
+
+img {
+  -webkit-user-drag: none;
+  user-select: none;
 }
 
 /* Mobile optimizations */
