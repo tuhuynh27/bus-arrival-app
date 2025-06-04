@@ -43,7 +43,7 @@ export function StationConfigComponent({
     return stationId;
   };
 
-  const getStationToBusNumbers = () => {
+  const stationToBusNumbers = useMemo(() => {
     const mapping: Record<string, Set<string>> = {};
     Object.keys(servicesData).forEach(busNo => {
       servicesData[busNo].routes.forEach(route => {
@@ -69,9 +69,7 @@ export function StationConfigComponent({
       });
     });
     return mappingArrays;
-  };
-
-  const stationToBusNumbers = useMemo(() => getStationToBusNumbers(), [servicesData]);
+  }, [servicesData]);
 
   const handleStationInputChange = (value: string) => {
     setNewStationInput(value);
