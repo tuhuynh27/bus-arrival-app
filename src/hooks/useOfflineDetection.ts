@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { timeoutSignal } from '../lib/utils';
 
 export interface OfflineState {
   isOffline: boolean;
@@ -21,7 +22,7 @@ export function useOfflineDetection() {
       const response = await fetch('https://arrivelah2.busrouter.sg/?id=10389', {
         method: 'HEAD',
         cache: 'no-cache',
-        signal: AbortSignal.timeout(5000), // 5 second timeout
+        signal: timeoutSignal(5000), // 5 second timeout
       });
       return response.ok;
     } catch {
