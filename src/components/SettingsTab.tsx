@@ -58,10 +58,11 @@ export function SettingsTab({
       <h2 className="text-xl font-bold">Settings</h2>
       {/* Login */}
       <Card>
-        <CardHeader className="pb-2">
-          <CardTitle className="flex items-center text-base">
-            Account
-          </CardTitle>
+        <CardHeader className="pb-2 space-y-1">
+          <CardTitle className="text-base">Account</CardTitle>
+          <p className="text-sm text-muted-foreground">
+            Sync your favourite stations across devices by signing in with your email.
+          </p>
         </CardHeader>
         <CardContent className="pt-0">
           {email ? (
@@ -73,7 +74,7 @@ export function SettingsTab({
             <form onSubmit={handleLogin} className="flex gap-2">
               <Input
                 type="email"
-                placeholder="Email"
+                placeholder="you@example.com"
                 value={emailInput}
                 onChange={(e) => setEmailInput(e.target.value)}
                 className="flex-1 text-base placeholder:text-base"
