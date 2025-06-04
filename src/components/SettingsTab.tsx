@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react'
 import { Card, CardHeader, CardTitle, CardContent } from './ui/card'
 import { Button } from './ui/button'
 import { Input } from './ui/input'
+import { PasscodeModal } from './PasscodeModal'
+import { jwtVerify, SignJWT } from 'jose'
 import { Sun, Moon } from 'lucide-react'
 import { toast } from 'sonner'
 import { StationConfigComponent } from './StationConfig'
@@ -28,20 +30,62 @@ export function SettingsTab({
 }: SettingsTabProps) {
   const [email, setEmail] = useLocalStorage<string>('userEmail', '')
   const [emailInput, setEmailInput] = useState(email)
+  const [users, setUsers] = useLocalStorage<Record<string, string>>('users', {})
+  const [authToken, setAuthToken] = useLocalStorage<string>('authToken', '')
+  const [pendingEmail, setPendingEmail] = useState('')
+  const [modalMode, setModalMode] = useState<'enter' | 'setup' | null>(null)
 
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault()
-    const value = emailInput.trim()
-    if (!value) return
-    setEmail(value)
+  const secret = new TextEncoder().encode(import.meta.env.VITE_JWT_SECRET)
+
+  const generateToken = async (userEmail: string) => {
+    return new SignJWT({ email: userEmail })
+      .setProtectedHeader({ alg: 'HS256' })
+      .setExpirationTime('7d')
+      .sign(secret)
+  }
+
+  const verifyExistingToken = async () => {
+    if (!authToken) return
     try {
-      const data = await fetchUserSettings(value)
+      const { payload } = await jwtVerify(authToken, secret)
+      const userEmail = payload.email as string
+      setEmail(userEmail)
+      setEmailInput(userEmail)
+    } catch {
+      setAuthToken('')
+      setEmail('')
+    }
+  }
+
+  useEffect(() => {
+    verifyExistingToken()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  const completeLogin = async (userEmail: string) => {
+    setEmail(userEmail)
+    const token = await generateToken(userEmail)
+    setAuthToken(token)
+    try {
+      const data = await fetchUserSettings(userEmail)
       if (data) {
         setStationConfigs(data)
       }
       toast.success('Settings synced')
     } catch {
       toast.error('Failed to load settings')
+    }
+  }
+
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault()
+    const value = emailInput.trim()
+    if (!value) return
+    setPendingEmail(value)
+    if (users[value]) {
+      setModalMode('enter')
+    } else {
+      setModalMode('setup')
     }
   }
 
@@ -68,7 +112,16 @@ export function SettingsTab({
           {email ? (
             <div className="flex items-center justify-between gap-2">
               <span className="text-sm break-all">{email}</span>
-              <Button size="sm" variant="outline" onClick={() => setEmail('')}>Log out</Button>
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => {
+                  setEmail('')
+                  setAuthToken('')
+                }}
+              >
+                Log out
+              </Button>
             </div>
           ) : (
             <form onSubmit={handleLogin} className="flex gap-2">
@@ -114,6 +167,24 @@ export function SettingsTab({
         onUpdateConfigs={setStationConfigs}
         stopsData={stopsData}
         servicesData={servicesData}
+      />
+      <PasscodeModal
+        mode={modalMode || 'enter'}
+        open={modalMode !== null}
+        onClose={() => {
+          setModalMode(null)
+          setPendingEmail('')
+        }}
+        onSubmit={async (pin) => {
+          if (modalMode === 'setup') {
+            setUsers({ ...users, [pendingEmail]: pin })
+          } else if (users[pendingEmail] !== pin) {
+            toast.error('Incorrect passcode')
+            return
+          }
+          setModalMode(null)
+          await completeLogin(pendingEmail)
+        }}
       />
     </div>
   );
