@@ -6,14 +6,20 @@ import { VitePWA } from "vite-plugin-pwa"
  
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [react(), tailwindcss(), VitePWA(
-    {
+  plugins: [
+    react(),
+    tailwindcss(),
+    VitePWA({
       registerType: 'autoUpdate',
+      injectRegister: 'script',
+      strategies: 'injectManifest',
+      srcDir: 'src',
+      filename: 'sw.ts',
       workbox: {
-        globPatterns: ['**/*.{html,js,css,png,json}']
+        globPatterns: ['**/*.{html,js,css,png,json}'],
       },
-    }
-  )],
+    })
+  ],
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
