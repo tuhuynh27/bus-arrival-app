@@ -57,6 +57,8 @@ export function SettingsTab({
     }
     setAuthToken('')
     setEmail('')
+    setModalMode(null)
+    setPendingEmail('')
   }
 
   useEffect(() => {
@@ -171,12 +173,13 @@ export function SettingsTab({
       />
       <PasscodeModal
         mode={modalMode || 'enter'}
-        open={modalMode !== null}
+        open={modalMode !== null && !!pendingEmail}
         onClose={() => {
           setModalMode(null)
           setPendingEmail('')
         }}
         onSubmit={async (pin) => {
+          if (!pendingEmail) return
           try {
             const { token } =
               modalMode === 'setup'
