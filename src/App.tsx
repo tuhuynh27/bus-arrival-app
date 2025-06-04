@@ -152,9 +152,9 @@ function AppContent() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background pt-safe">
       {/* Main Content */}
-      <div className="mx-auto max-w-[480px] p-3 pb-20">
+      <div className="mx-auto max-w-[480px] p-3 pb-16">
         {renderTabContent()}
       </div>
       {/* Bottom Navigation */}
