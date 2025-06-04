@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@netlify/functions": "^4.1.2",
     "@radix-ui/react-slot": "^1.2.3",
     "@radix-ui/react-tabs": "^1.1.12",
     "@tailwindcss/vite": "^4.1.7",
@@ -24,6 +25,10 @@
     "sonner": "^2.0.3",
     "tailwind-merge": "^3.3.0",
     "tailwindcss": "^4.1.7",
+    "web-push": "^3.6.7",
+    "workbox-build": "^7.3.0",
+    "workbox-core": "^7.3.0",
+    "workbox-precaching": "^7.3.0",
     "workbox-window": "^7.3.0"
   },
   "devDependencies": {

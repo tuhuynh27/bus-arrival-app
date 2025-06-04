@@ -9,7 +9,7 @@ A modern, mobile-first Progressive Web App (PWA) for real-time bus arrival track
 - 🎨 **Modern UI**: Built with shadcn/ui components and Tailwind CSS v4
 - 🌓 **Dark/Light Theme**: Manual theme switching with system preference support
 - 📍 **Station Management**: Add and configure your favorite bus stops and routes
-- 🔔 **Smart Notifications**: Get notified when buses are approaching (browser notifications)
+- 🔔 **Smart Notifications**: Web Push alerts when buses are approaching
 - 💾 **Offline Storage**: Your settings and favorite stops are saved locally
 - 🔄 **Auto-refresh**: Automatic data updates using TanStack Query
 - 📲 **PWA Support**: Install as a mobile app with offline caching
@@ -21,7 +21,7 @@ A modern, mobile-first Progressive Web App (PWA) for real-time bus arrival track
 - **Styling**: Tailwind CSS v4 + shadcn/ui
 - **State Management**: TanStack Query + Local Storage hooks
 - **Build Tool**: Vite
-- **PWA**: vite-plugin-pwa with Workbox
+- **PWA**: vite-plugin-pwa with Workbox (custom service worker via injectManifest)
 - **Icons**: Lucide React
 - **Notifications**: Sonner
 - **Data Source**: arrivelah2.busrouter.sg API (Singapore LTA)
@@ -46,12 +46,18 @@ cd bus
 pnpm install
 ```
 
-3. Start the development server:
+3. Copy `.env.example` to `.env` and fill in the VAPID keys used for Web Push:
+```bash
+cp .env.example .env
+# edit .env and set VITE_VAPID_PUBLIC_KEY, VAPID_PUBLIC_KEY and VAPID_PRIVATE_KEY
+```
+
+4. Start the development server:
 ```bash
 pnpm run dev
 ```
 
-4. Open your browser and visit `http://localhost:5173`
+5. Open your browser and visit `http://localhost:5173`
 
 ### Building for Production
 
@@ -79,8 +85,9 @@ The built files will be in the `dist` directory.
 
 ### Getting Notifications
 
-- Tap the bell icon (🔔) on any bus card to set a notification
-- The app will alert you when the bus is approaching (requires browser notification permission)
+- Tap the bell icon (🔔) on any bus card to schedule an alert
+- The app uses Web Push via Netlify Functions and the service worker to notify you about approaching buses
+- Works on modern browsers including iOS Safari 16.4+
 
 ### Theme Switching
 

@@ -11,6 +11,7 @@ import './App.css';
 import { HomeTab } from './components/HomeTab';
 import { SettingsTab } from './components/SettingsTab';
 import { NotificationsTab } from './components/NotificationsTab';
+import { requestPushSubscription, schedulePush } from './services/push';
 // Import static data directly for instant loading
 import stopsData from './assets/data/stops.json';
 import servicesData from './assets/data/services.json';
@@ -64,17 +65,30 @@ function AppContent() {
     setTheme(theme === 'light' ? 'dark' : 'light');
   };
 
-  const handleNotify = (bus: BusArrival) => {
+  const handleNotify = async (bus: BusArrival) => {
     const remainingTime = bus.arrivalTimestamp - Date.now();
     const minutes = Math.floor(remainingTime / (1000 * 60));
     if (remainingTime <= 0) {
       toast.info('Bus is arriving now!');
-    } else if (remainingTime <= 60000) {
-      toast.info('Bus is arriving in less than 60 seconds!');
-    } else {
-      toast.success(`Notification set for Bus ${bus.busNo} (${minutes} min)`);
-      // In a real app, you would set up a notification here
+      return;
     }
+
+    const subscription = await requestPushSubscription();
+    if (!subscription) {
+      toast.error('Notifications not enabled');
+      return;
+    }
+
+    const delay = Math.max(remainingTime - 60000, 0); // notify about 1 min before
+    await schedulePush(
+      subscription,
+      {
+        title: `Bus ${bus.busNo} approaching`,
+        body: `Bus ${bus.busNo} will arrive soon`,
+      },
+      delay,
+    );
+    toast.success(`Notification set for Bus ${bus.busNo} (${minutes} min)`);
   };
 
   const refreshAllData = async () => {
