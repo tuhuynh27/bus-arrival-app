@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { toast } from 'sonner'
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card'
 import { Button } from './ui/button'
 import { InputOTP } from './ui/input-otp'
@@ -14,16 +15,20 @@ export function PasscodeModal({ mode, open, onSubmit, onClose }: PasscodeModalPr
   const [step, setStep] = useState(0)
   const [pin, setPin] = useState('')
   const [confirm, setConfirm] = useState('')
+  const [error, setError] = useState('')
 
   useEffect(() => {
     if (!open) {
       setStep(0)
       setPin('')
       setConfirm('')
+      setError('')
     }
   }, [open])
 
-  if (!open) return null
+  useEffect(() => {
+    setError('')
+  }, [pin, confirm])
 
   const handlePrimary = () => {
     if (mode === 'setup') {
@@ -31,8 +36,14 @@ export function PasscodeModal({ mode, open, onSubmit, onClose }: PasscodeModalPr
         if (pin.length === 4) {
           setStep(1)
         }
-      } else if (confirm.length === 4 && confirm === pin) {
-        onSubmit(pin)
+      } else if (confirm.length === 4) {
+        if (confirm === pin) {
+          onSubmit(pin)
+        } else {
+          setError('Passcodes do not match')
+          toast.error('Passcodes do not match')
+          setConfirm('')
+        }
       }
     } else {
       if (pin.length === 4) {
@@ -41,11 +52,25 @@ export function PasscodeModal({ mode, open, onSubmit, onClose }: PasscodeModalPr
     }
   }
 
+  useEffect(() => {
+    if (!open) return
+    if (mode === 'setup') {
+      if (step === 0 && pin.length === 4) {
+        handlePrimary()
+      } else if (step === 1 && confirm.length === 4) {
+        handlePrimary()
+      }
+    } else if (pin.length === 4) {
+      handlePrimary()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pin, confirm, step, mode, open])
+
   const title = mode === 'setup' ? (step === 0 ? 'Set Passcode' : 'Confirm Passcode') : 'Enter Passcode'
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <Card className="w-full max-w-sm mx-auto shadow-2xl">
+      <Card className="max-w-sm mx-auto shadow-2xl">
         <CardHeader className="pb-2 text-center">
           <CardTitle className="text-base">{title}</CardTitle>
         </CardHeader>
@@ -55,9 +80,10 @@ export function PasscodeModal({ mode, open, onSubmit, onClose }: PasscodeModalPr
           ) : (
             <InputOTP value={pin} onChange={setPin} autoFocus length={4} className="mx-auto" />
           )}
-          <div className="flex gap-1">
-            <Button className="flex-1" variant="outline" onClick={onClose}>Cancel</Button>
-            <Button className="flex-1" onClick={handlePrimary}>OK</Button>
+          {error && <p className="text-red-600 text-center text-sm">{error}</p>}
+          <div className="flex justify-center gap-2">
+            <Button className="w-20" variant="outline" onClick={onClose}>Cancel</Button>
+            <Button className="w-20" onClick={handlePrimary}>OK</Button>
           </div>
         </CardContent>
       </Card>
