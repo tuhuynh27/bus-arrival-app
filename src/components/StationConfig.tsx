@@ -4,6 +4,7 @@ import { Input } from './ui/input';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
 import { Plus, Trash2, X } from 'lucide-react';
+import { toast } from 'sonner';
 import type { StationConfig, StopData, ServiceData } from '../types';
 
 interface StationSuggestion {
@@ -30,6 +31,45 @@ export function StationConfigComponent({
   const [newBusNumberInputs, setNewBusNumberInputs] = useState<Record<string, string>>({});
   const [stationSuggestions, setStationSuggestions] = useState<StationSuggestion[]>([]);
   const [busNumberSuggestions, setBusNumberSuggestions] = useState<Record<string, string[]>>({});
+  const [locationFetched, setLocationFetched] = useState(false);
+
+  const handleStationInputFocus = () => {
+    if (locationFetched || newStationInput.length > 0) return;
+    setLocationFetched(true);
+    if ('geolocation' in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          if (newStationInput.length >= 2) return;
+          const { latitude, longitude } = pos.coords;
+          const suggestions = Object.keys(stopsData)
+            .map((stationId) => {
+              const stop = stopsData[stationId];
+              const distance = Math.sqrt(
+                Math.pow(stop[1] - latitude, 2) +
+                Math.pow(stop[0] - longitude, 2)
+              );
+              return {
+                stationId,
+                name: stop[2],
+                road: stop[3],
+                displayName: `${stop[2]} (${stop[3]}) [${stationId}]`,
+                distance,
+              };
+            })
+            .sort((a, b) => a.distance - b.distance)
+            .slice(0, 8)
+            .map(({ stationId, name, road, displayName }) => ({ stationId, name, road, displayName }));
+          setStationSuggestions(suggestions);
+        },
+        () => {
+          toast.error('Unable to retrieve your location');
+        },
+        { enableHighAccuracy: true, maximumAge: 600000, timeout: 5000 }
+      );
+    } else {
+      toast.error('Geolocation not supported');
+    }
+  };
 
   const getStationDisplayName = (stationId: string, truncate = false) => {
     const stop = stopsData[stationId];
@@ -217,6 +257,7 @@ export function StationConfigComponent({
                 placeholder="Enter Station ID or Name"
                 value={newStationInput}
                 onChange={(e) => handleStationInputChange(e.target.value)}
+                onFocus={handleStationInputFocus}
                 className="text-base placeholder:text-base"
               />
               {stationSuggestions.length > 0 && (
