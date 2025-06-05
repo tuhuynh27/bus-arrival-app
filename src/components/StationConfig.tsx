@@ -6,6 +6,22 @@ import { Badge } from './ui/badge';
 import { Plus, Trash2, X } from 'lucide-react';
 import { toast } from 'sonner';
 import type { StationConfig, StopData, ServiceData } from '../types';
+import {
+  DndContext,
+  PointerSensor,
+  TouchSensor,
+  useSensor,
+  useSensors,
+  closestCenter,
+} from '@dnd-kit/core';
+import type { DragEndEvent } from '@dnd-kit/core';
+import {
+  SortableContext,
+  useSortable,
+  verticalListSortingStrategy,
+  arrayMove,
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 
 interface StationSuggestion {
   stationId: string;
@@ -19,6 +35,36 @@ interface StationConfigProps {
   onUpdateConfigs: (configs: StationConfig[]) => void;
   stopsData: StopData;
   servicesData: ServiceData;
+}
+
+function SortableStationCard({
+  config,
+  children,
+}: {
+  config: StationConfig;
+  children: React.ReactNode;
+}) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: config.stationId });
+
+  const style: React.CSSProperties = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    touchAction: 'none',
+    opacity: isDragging ? 0.8 : undefined,
+  };
+
+  return (
+    <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
+      {children}
+    </div>
+  );
 }
 
 export function StationConfigComponent({ 
@@ -177,6 +223,20 @@ export function StationConfigComponent({
     onUpdateConfigs(updatedConfigs);
   };
 
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
+    useSensor(TouchSensor, { activationConstraint: { delay: 200, tolerance: 5 } })
+  );
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (over && active.id !== over.id) {
+      const oldIndex = stationConfigs.findIndex((s) => s.stationId === active.id);
+      const newIndex = stationConfigs.findIndex((s) => s.stationId === over.id);
+      onUpdateConfigs(arrayMove(stationConfigs, oldIndex, newIndex));
+    }
+  };
+
   const handleStationSelect = (suggestion: StationSuggestion) => {
     setNewStationInput(suggestion.displayName);
     setStationSuggestions([]);
@@ -232,16 +292,19 @@ export function StationConfigComponent({
         </CardContent>
       </Card>
 
-      {stationConfigs.map((config) => {
-        const availableBuses = stationToBusNumbers[config.stationId] || [];
-        
-        return (
-          <Card key={config.stationId}>
-            <CardHeader className="pb-3">
-              <div className="flex justify-between items-start gap-2">
-                <div className="flex-1 min-w-0">
-                  <CardTitle className="text-lg break-words">
-                    {getStationDisplayName(config.stationId, true)}
+      <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+        <SortableContext items={stationConfigs.map((s) => s.stationId)} strategy={verticalListSortingStrategy}>
+          {stationConfigs.map((config) => {
+            const availableBuses = stationToBusNumbers[config.stationId] || [];
+
+            return (
+              <SortableStationCard key={config.stationId} config={config}>
+                <Card>
+                  <CardHeader className="pb-3">
+                    <div className="flex justify-between items-start gap-2">
+                      <div className="flex-1 min-w-0">
+                        <CardTitle className="text-lg break-words">
+                          {getStationDisplayName(config.stationId, true)}
                   </CardTitle>
                   <div className="text-xs text-muted-foreground mt-1">
                     ID: {config.stationId}
@@ -250,8 +313,8 @@ export function StationConfigComponent({
                     )}
                   </div>
                 </div>
-                <Button 
-                  variant="ghost" 
+                <Button
+                  variant="ghost"
                   size="sm"
                   onClick={() => removeStation(config.stationId)}
                   className="flex-shrink-0"
@@ -284,9 +347,9 @@ export function StationConfigComponent({
                   </div>
                   <div className="flex flex-wrap gap-2">
                     {availableBuses.map(busNo => (
-                      <Badge 
-                        key={busNo} 
-                        variant="outline" 
+                      <Badge
+                        key={busNo}
+                        variant="outline"
                         className="min-w-[40px] min-h-[40px] h-10 px-4 py-2 text-base cursor-pointer hover:bg-accent flex items-center justify-center rounded-lg"
                         onClick={() => {
                           if (!config.busNumbers.includes(busNo)) {
@@ -302,8 +365,11 @@ export function StationConfigComponent({
               )}
             </CardContent>
           </Card>
-        );
-      })}
+              </SortableStationCard>
+            );
+          })}
+        </SortableContext>
+      </DndContext>
     </div>
   );
 } 
