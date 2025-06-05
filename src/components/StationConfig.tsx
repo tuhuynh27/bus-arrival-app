@@ -65,7 +65,6 @@ function SortableStationCard({
   const style: React.CSSProperties = {
     transform: CSS.Transform.toString(transform),
     transition,
-    touchAction: 'none',
     opacity: isDragging ? 0.8 : undefined,
   };
 
@@ -317,9 +316,9 @@ export function StationConfigComponent({
                             {...attributes}
                             {...listeners}
                             ref={setActivatorNodeRef}
-                            className="mt-1 cursor-grab active:cursor-grabbing text-muted-foreground"
+                            className="mt-1 cursor-grab active:cursor-grabbing text-muted-foreground touch-none -m-2 p-2"
                           >
-                            <GripVertical className="w-4 h-4" />
+                            <GripVertical className="w-6 h-6" />
                           </div>
                           <div className="min-w-0 flex-1">
                             <CardTitle className="text-lg break-words">
