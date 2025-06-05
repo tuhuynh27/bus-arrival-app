@@ -7,7 +7,13 @@ import { precacheAndRoute } from 'workbox-precaching'
 import type { ManifestEntry } from 'workbox-build'
 declare let self: ServiceWorkerGlobalScope & { __WB_MANIFEST: ManifestEntry[] }
 
-self.skipWaiting()
+self.addEventListener('message', (event) => {
+  const msg = event.data as { type?: string } | undefined
+  if (msg?.type === 'SKIP_WAITING') {
+    self.skipWaiting()
+  }
+})
+
 clientsClaim()
 precacheAndRoute(self.__WB_MANIFEST)
 
