@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { Card, CardHeader, CardTitle, CardContent } from './ui/card'
 import { Button } from './ui/button'
 import { Input } from './ui/input'
+import { Slider } from './ui/slider'
 import { Avatar, AvatarFallback } from './ui/avatar'
 import { User } from 'lucide-react'
 import { PasscodeModal } from './PasscodeModal'
@@ -171,17 +172,17 @@ export function SettingsTab({
         </CardHeader>
         <CardContent className="pt-0">
           <div className="flex items-center gap-2">
-            <Input
-              type="number"
-              min={0}
-              value={notifyMinutes}
-              onChange={(e) => {
-                const minutes = Number(e.target.value)
-                setNotifyMinutes(Number.isNaN(minutes) ? 0 : Math.max(0, minutes))
-              }}
-              className="w-20"
-            />
-            <span className="text-sm text-muted-foreground">minutes before</span>
+              <Slider
+                min={1}
+                max={10}
+                step={1}
+                value={[notifyMinutes]}
+                onValueChange={(v) => setNotifyMinutes(v[0])}
+                className="flex-1"
+              />
+            <span className="text-sm text-muted-foreground">
+              {notifyMinutes} minute{notifyMinutes > 1 ? 's' : ''} before
+            </span>
           </div>
         </CardContent>
       </Card>

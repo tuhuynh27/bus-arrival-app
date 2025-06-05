@@ -3,6 +3,7 @@ import { Badge } from './badge'
 import { Button } from './button'
 import { Card, CardContent, CardHeader, CardTitle } from './card'
 import { Input } from './input'
+import { Slider } from './slider'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from './tabs'
 
 describe('UI components render', () => {
@@ -28,6 +29,10 @@ describe('UI components render', () => {
   it('Input', () => {
     const { getByRole } = render(<Input />)
     expect(getByRole('textbox')).toBeTruthy()
+  })
+  it('Slider', () => {
+    const { getByRole } = render(<Slider />)
+    expect(getByRole('slider')).toBeTruthy()
   })
   it('Tabs', () => {
     const { getByText } = render(
