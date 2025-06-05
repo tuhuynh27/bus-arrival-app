@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
-import { Download } from 'lucide-react'
 import { Button } from './ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from './ui/card'
+import busIcon from '@/assets/bus.png'
 import { useLocalStorage } from '../hooks/useLocalStorage'
 
 interface BeforeInstallPromptEvent extends Event {
@@ -49,26 +48,37 @@ export function InstallPrompt() {
   if (!show) return null
 
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <Card className="w-full max-w-sm mx-auto shadow-2xl">
-        <CardHeader className="text-center pb-4">
-          <div className="mx-auto w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-4">
-            <Download className="w-8 h-8 text-primary" />
-          </div>
-          <CardTitle className="text-xl font-semibold">Add to Home Screen</CardTitle>
-        </CardHeader>
-        <CardContent className="text-center space-y-4">
+    <div className="bg-background border-b border-border/50 shadow-sm">
+      <div className="max-w-[480px] mx-auto flex items-center gap-3 p-3">
+        <img
+          src={busIcon}
+          alt="App icon"
+          className="w-8 h-8 rounded-md flex-shrink-0"
+          draggable={false}
+          onContextMenu={(e) => e.preventDefault()}
+        />
+        <div className="flex-1 text-sm">
           {promptEvent ? (
-            <p className="text-sm text-muted-foreground">Install this app for quick access.</p>
+            <p>
+              Install <span className="font-medium">SG Bus Arrival</span> for quick access
+            </p>
           ) : (
-            <p className="text-sm text-muted-foreground">Tap Share and choose "Add to Home Screen".</p>
+            <p>
+              Tap Share and choose <span className="font-medium">Add to Home Screen</span>
+            </p>
           )}
-          <div className="flex gap-3 justify-center">
-            {promptEvent && <Button onClick={install}>Install</Button>}
-            <Button variant="outline" onClick={dismiss}>Dismiss</Button>
-          </div>
-        </CardContent>
-      </Card>
+        </div>
+        <div className="flex gap-2">
+          {promptEvent && (
+            <Button size="sm" onClick={install} className="px-3">
+              Install
+            </Button>
+          )}
+          <Button size="sm" variant="ghost" onClick={dismiss} className="px-3">
+            Dismiss
+          </Button>
+        </div>
+      </div>
     </div>
   )
 }

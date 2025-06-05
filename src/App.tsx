@@ -155,6 +155,7 @@ function AppContent() {
 
   return (
     <div className="min-h-screen bg-background pt-safe">
+      <InstallPrompt />
       {/* Main Content */}
       <div className="mx-auto max-w-[480px] p-3 pb-16">
         {renderTabContent()}
@@ -177,7 +178,6 @@ function AppContent() {
         onRetry={handleOfflineRetry}
       />
       <UpdatePrompt />
-      <InstallPrompt />
     </div>
   );
 }
