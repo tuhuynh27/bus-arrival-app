@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react'
 import { Card, CardHeader, CardTitle, CardContent } from './ui/card'
 import { Button } from './ui/button'
 import { Input } from './ui/input'
+import { Avatar, AvatarFallback } from './ui/avatar'
+import { User } from 'lucide-react'
 import { PasscodeModal } from './PasscodeModal'
 import { toast } from 'sonner'
 import { format } from 'date-fns'
@@ -115,7 +117,14 @@ export function SettingsTab({
           {email ? (
             <div className="space-y-2">
               <div className="flex items-center justify-between gap-2">
-                <span className="text-sm break-all">{email}</span>
+                <div className="flex items-center gap-2">
+                  <Avatar className="size-8">
+                    <AvatarFallback>
+                      {email ? email.charAt(0).toUpperCase() : <User className="w-4 h-4" />}
+                    </AvatarFallback>
+                  </Avatar>
+                  <span className="text-sm break-all">{email}</span>
+                </div>
                 <Button
                   size="sm"
                   variant="outline"
