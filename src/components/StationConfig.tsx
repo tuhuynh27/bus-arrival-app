@@ -203,6 +203,11 @@ export function StationConfigComponent({
                 value={newStationInput}
                 onChange={(e) => handleStationInputChange(e.target.value)}
                 onFocus={handleStationInputFocus}
+                onBlur={() => {
+                  setTimeout(() => {
+                    setStationSuggestions([])
+                  }, 100)
+                }}
                 className="text-base placeholder:text-base"
               />
               {stationSuggestions.length > 0 && (
