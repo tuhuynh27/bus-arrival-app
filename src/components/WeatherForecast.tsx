@@ -3,7 +3,8 @@ import { format } from 'date-fns'
 import { Sun, Cloud, CloudRain, CloudSnow, CloudDrizzle, CloudLightning, CloudFog } from 'lucide-react'
 import { Card, CardContent } from './ui/card'
 import type { WeatherData } from '../services/weather'
-import { fetchWeather, DEFAULT_LOCATION } from '../services/weather'
+import { fetchWeather, DEFAULT_LOCATION, type WeatherLocation } from '../services/weather'
+import { useEffect, useState } from 'react'
 
 function weatherIcon(code: number) {
   if (code === 0) return { Icon: Sun, label: 'Clear' }
@@ -17,9 +18,29 @@ function weatherIcon(code: number) {
 }
 
 export function WeatherForecast() {
+  const [location, setLocation] = useState<WeatherLocation>(DEFAULT_LOCATION)
+
+  useEffect(() => {
+    if ('geolocation' in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          setLocation({
+            latitude: pos.coords.latitude,
+            longitude: pos.coords.longitude,
+            timezone: DEFAULT_LOCATION.timezone,
+          })
+        },
+        () => {
+          /* fallback to default */
+        },
+        { enableHighAccuracy: true, maximumAge: 3600000, timeout: 5000 },
+      )
+    }
+  }, [])
+
   const { data, isLoading, error } = useQuery<WeatherData>({
-    queryKey: ['weather', DEFAULT_LOCATION.latitude, DEFAULT_LOCATION.longitude],
-    queryFn: () => fetchWeather(DEFAULT_LOCATION),
+    queryKey: ['weather', location.latitude, location.longitude],
+    queryFn: () => fetchWeather(location),
     staleTime: 1000 * 60 * 5,
   })
 

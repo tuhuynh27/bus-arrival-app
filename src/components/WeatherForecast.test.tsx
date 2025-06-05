@@ -3,6 +3,10 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { WeatherForecast } from './WeatherForecast'
 import * as weatherService from '@/services/weather'
 
+const mockGeo = {
+  getCurrentPosition: vi.fn((cb: any) => cb({ coords: { latitude: 1, longitude: 2 } }))
+} as Geolocation
+
 const queryClient = new QueryClient()
 
 describe('WeatherForecast', () => {
@@ -13,6 +17,7 @@ describe('WeatherForecast', () => {
       precipitation_probability: [5],
       weathercode: [0],
     })
+    Object.defineProperty(global.navigator, 'geolocation', { value: mockGeo, configurable: true })
     const { getByText } = render(
       <QueryClientProvider client={queryClient}>
         <WeatherForecast />
@@ -21,5 +26,6 @@ describe('WeatherForecast', () => {
     await waitFor(() => {
       expect(getByText('12AM')).toBeTruthy()
     })
+    vi.restoreAllMocks()
   })
 })
