@@ -172,14 +172,14 @@ export function SettingsTab({
         </CardHeader>
         <CardContent className="pt-0">
           <div className="flex items-center gap-2">
-            <Slider
-              min={1}
-              max={10}
-              step={1}
-              value={notifyMinutes}
-              onChange={(e) => setNotifyMinutes(Number(e.target.value))}
-              className="flex-1"
-            />
+              <Slider
+                min={1}
+                max={10}
+                step={1}
+                value={[notifyMinutes]}
+                onValueChange={(v) => setNotifyMinutes(v[0])}
+                className="flex-1"
+              />
             <span className="text-sm text-muted-foreground">
               {notifyMinutes} minute{notifyMinutes > 1 ? 's' : ''} before
             </span>
