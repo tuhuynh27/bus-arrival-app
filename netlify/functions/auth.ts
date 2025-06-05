@@ -43,14 +43,23 @@ const handler: Handler = async (event) => {
       await store.setJSON(key, { salt, hash })
     } else if (action === 'login') {
       const data = (await store.get(key, { type: 'json' })) as {
-        salt: string
+        salt?: string
         hash: string
       } | null
       if (!data) {
         return { statusCode: 401, body: 'Invalid pin' }
       }
-      const check = crypto.pbkdf2Sync(pin, data.salt, ITERATIONS, KEY_LEN, DIGEST).toString('hex')
-      if (check !== data.hash) {
+      let valid = false
+      if (data.salt) {
+        const check = crypto
+          .pbkdf2Sync(pin, data.salt, ITERATIONS, KEY_LEN, DIGEST)
+          .toString('hex')
+        valid = check === data.hash
+      } else {
+        const legacyHash = crypto.createHash('sha256').update(pin).digest('hex')
+        valid = legacyHash === data.hash
+      }
+      if (!valid) {
         return { statusCode: 401, body: 'Invalid pin' }
       }
     } else {

@@ -1,5 +1,7 @@
 // @vitest-environment node
 import { describe, it, expect, vi } from 'vitest'
+import crypto from 'node:crypto'
+import { getStore } from '@netlify/blobs'
 
 vi.mock('@netlify/blobs', () => {
   const store = new Map<string, any>()
@@ -54,5 +56,23 @@ describe('auth', () => {
       ...eventBase,
     })
     expect(getRes.statusCode).toBe(200)
+  })
+
+  it('logs in user stored with sha256 hash', async () => {
+    process.env.JWT_SECRET = 'testsecret'
+    const { handler } = await import('../functions/auth')
+    const store = getStore('user-passcodes')
+    const email = 'legacy@example.com'
+    const key = encodeURIComponent(email)
+    const pin = '5555'
+    const legacyHash = crypto.createHash('sha256').update(pin).digest('hex')
+    await store.setJSON(key, { hash: legacyHash })
+
+    const res = await handler({
+      httpMethod: 'POST',
+      body: JSON.stringify({ email, pin, action: 'login' }),
+      ...eventBase,
+    })
+    expect(res.statusCode).toBe(200)
   })
 })
