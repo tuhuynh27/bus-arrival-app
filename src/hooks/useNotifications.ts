@@ -2,9 +2,11 @@ import { toast } from 'sonner'
 import { requestPushSubscription, schedulePush } from '../services/push'
 import type { BusArrival } from '../types'
 import { usePendingNotifications } from './usePendingNotifications'
+import { useLocalStorage } from './useLocalStorage'
 
 export function useNotifications() {
   const { addNotification, removeNotification } = usePendingNotifications()
+  const [notifyMinutes] = useLocalStorage<number>('notifyLeadTime', 2)
 
   const notifyBus = async (bus: BusArrival) => {
     const remainingTime = bus.arrivalTimestamp - Date.now()
@@ -20,7 +22,7 @@ export function useNotifications() {
       return
     }
 
-    const notifyBefore = 2 * 60 * 1000 // 2 minutes
+    const notifyBefore = notifyMinutes * 60 * 1000
     const delay = Math.max(remainingTime - notifyBefore, 0)
     await schedulePush(
       subscription,

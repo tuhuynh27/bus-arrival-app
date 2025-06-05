@@ -32,6 +32,7 @@ export function SettingsTab({
   const [lastSync, setLastSync] = useLocalStorage<number>('lastSync', 0)
   const [pendingEmail, setPendingEmail] = useState('')
   const [modalMode, setModalMode] = useState<'enter' | 'setup' | null>(null)
+  const [notifyMinutes, setNotifyMinutes] = useLocalStorage<number>('notifyLeadTime', 2)
 
   const decodeJwt = (token: string) => {
     const base64 = token
@@ -158,6 +159,29 @@ export function SettingsTab({
               <Button type="submit" size="sm">Login</Button>
             </form>
           )}
+        </CardContent>
+      </Card>
+      {/* Notification Settings */}
+      <Card>
+        <CardHeader className="pb-2 space-y-1">
+          <CardTitle className="text-base">Alerts</CardTitle>
+          <p className="text-sm text-muted-foreground">
+            Choose how many minutes before arrival you're notified.
+          </p>
+        </CardHeader>
+        <CardContent className="pt-0">
+          <div className="flex items-center gap-2">
+            <Input
+              type="number"
+              min={0}
+              value={notifyMinutes}
+              onChange={(e) =>
+                setNotifyMinutes(parseInt(e.target.value) || 0)
+              }
+              className="w-20"
+            />
+            <span className="text-sm text-muted-foreground">minutes before</span>
+          </div>
         </CardContent>
       </Card>
       {/* Station Configuration */}
