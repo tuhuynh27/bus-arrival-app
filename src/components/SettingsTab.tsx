@@ -175,9 +175,10 @@ export function SettingsTab({
               type="number"
               min={0}
               value={notifyMinutes}
-              onChange={(e) =>
-                setNotifyMinutes(parseInt(e.target.value) || 0)
-              }
+              onChange={(e) => {
+                const minutes = Number(e.target.value)
+                setNotifyMinutes(Number.isNaN(minutes) ? 0 : Math.max(0, minutes))
+              }}
               className="w-20"
             />
             <span className="text-sm text-muted-foreground">minutes before</span>
