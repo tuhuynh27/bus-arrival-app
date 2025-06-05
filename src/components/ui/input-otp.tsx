@@ -1,4 +1,4 @@
-import React, { useRef } from 'react'
+import React, { useRef, useEffect } from 'react'
 import { cn } from '@/lib/utils'
 
 interface InputOTPProps {
@@ -12,6 +12,15 @@ interface InputOTPProps {
 export function InputOTP({ length = 4, value, onChange, autoFocus = false, className }: InputOTPProps) {
   const refs = useRef<(HTMLInputElement | null)[]>([])
   const values = Array.from({ length }, (_, i) => value[i] || '')
+
+  useEffect(() => {
+    if (autoFocus) {
+      setTimeout(() => {
+        refs.current[0]?.focus()
+        refs.current[0]?.select()
+      }, 0)
+    }
+  }, [autoFocus])
 
   const focusIndex = (idx: number) => {
     refs.current[idx]?.focus()
