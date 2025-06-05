@@ -4,6 +4,10 @@ import type { LambdaEvent } from '@netlify/serverless-functions-api/dist/lambda/
 import { SignJWT } from 'jose'
 import crypto from 'node:crypto'
 
+const ITERATIONS = 100000
+const KEY_LEN = 32
+const DIGEST = 'sha256'
+
 const handler: Handler = async (event) => {
   if ((event as { blobs?: string }).blobs) {
     try {
@@ -32,13 +36,21 @@ const handler: Handler = async (event) => {
       return { statusCode: 400, body: 'Email and pin required' }
     }
     const key = encodeURIComponent(email.trim().toLowerCase())
-    const hash = crypto.createHash('sha256').update(pin).digest('hex')
 
     if (action === 'register') {
-      await store.setJSON(key, { hash })
+      const salt = crypto.randomBytes(16).toString('hex')
+      const hash = crypto.pbkdf2Sync(pin, salt, ITERATIONS, KEY_LEN, DIGEST).toString('hex')
+      await store.setJSON(key, { salt, hash })
     } else if (action === 'login') {
-      const data = await store.get(key, { type: 'json' })
-      if (!data || data.hash !== hash) {
+      const data = (await store.get(key, { type: 'json' })) as {
+        salt: string
+        hash: string
+      } | null
+      if (!data) {
+        return { statusCode: 401, body: 'Invalid pin' }
+      }
+      const check = crypto.pbkdf2Sync(pin, data.salt, ITERATIONS, KEY_LEN, DIGEST).toString('hex')
+      if (check !== data.hash) {
         return { statusCode: 401, body: 'Invalid pin' }
       }
     } else {
