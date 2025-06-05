@@ -43,7 +43,6 @@ function AppContent() {
   ]);
 
   const { notifyBus } = useNotifications();
-  const [installPromptVisible, setInstallPromptVisible] = useState(false);
 
   // Scroll to top whenever the active tab changes
   useEffect(() => {
@@ -156,17 +155,13 @@ function AppContent() {
 
   return (
     <div className="min-h-screen bg-background pt-safe">
-      <InstallPrompt onVisibleChange={setInstallPromptVisible} />
+      <InstallPrompt />
       {/* Main Content */}
       <div className="mx-auto max-w-[480px] p-3 pb-16">
         {renderTabContent()}
       </div>
       {/* Bottom Navigation */}
-      <BottomNavigation
-        activeTab={activeTab}
-        onTabChange={setActiveTab}
-        offsetBottom={installPromptVisible ? 80 : 0}
-      />
+      <BottomNavigation activeTab={activeTab} onTabChange={setActiveTab} />
       {/* Toast Container */}
       <Toaster
         richColors

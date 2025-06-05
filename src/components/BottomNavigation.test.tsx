@@ -4,9 +4,7 @@ import { BottomNavigation } from './BottomNavigation'
 describe('BottomNavigation', () => {
   it('calls onTabChange when clicked', () => {
     const fn = vi.fn()
-    const { getByText } = render(
-      <BottomNavigation activeTab="home" onTabChange={fn} offsetBottom={0} />
-    )
+    const { getByText } = render(<BottomNavigation activeTab="home" onTabChange={fn} />)
     fireEvent.click(getByText('Settings'))
     expect(fn).toHaveBeenCalled()
   })
