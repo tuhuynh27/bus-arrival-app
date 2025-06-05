@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react'
 import { Card, CardHeader, CardTitle, CardContent } from './ui/card'
 import { Button } from './ui/button'
 import { Input } from './ui/input'
+import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar'
+import { User } from 'lucide-react'
 import { PasscodeModal } from './PasscodeModal'
 import { toast } from 'sonner'
 import { format } from 'date-fns'
@@ -102,7 +104,7 @@ export function SettingsTab({
 
   return (
     <div className="space-y-3 pb-6">
-      <h2 className="text-xl font-bold">Settings</h2>
+      <h2 className="text-xl font-bold tracking-tight">Settings</h2>
       {/* Login */}
       <Card>
         <CardHeader className="pb-2 space-y-1">
@@ -115,7 +117,15 @@ export function SettingsTab({
           {email ? (
             <div className="space-y-2">
               <div className="flex items-center justify-between gap-2">
-                <span className="text-sm break-all">{email}</span>
+                <div className="flex items-center gap-2 min-w-0">
+                  <Avatar>
+                    <AvatarImage src="" alt="User avatar" />
+                    <AvatarFallback>
+                      <User className="w-4 h-4" />
+                    </AvatarFallback>
+                  </Avatar>
+                  <span className="text-sm break-all">{email}</span>
+                </div>
                 <Button
                   size="sm"
                   variant="outline"

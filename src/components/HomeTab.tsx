@@ -164,7 +164,7 @@ export function HomeTab({
           </div>
           {/* App Title */}
           <div>
-            <h1 className="text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 dark:from-white dark:to-gray-200 bg-clip-text text-transparent">
+            <h1 className="text-2xl font-bold tracking-tight bg-gradient-to-r from-gray-900 to-gray-700 dark:from-white dark:to-gray-200 bg-clip-text text-transparent">
               SG Bus
             </h1>
             <p className="text-sm font-medium bg-gradient-to-r from-gray-900 to-gray-700 dark:from-white dark:to-gray-200 bg-clip-text text-transparent -mt-1">
@@ -191,7 +191,7 @@ export function HomeTab({
         <Card>
           <CardContent className="p-4 text-center">
             <MapPin className="w-10 h-10 mx-auto mb-3 text-muted-foreground" />
-            <h3 className="text-base font-semibold mb-2">No stations configured</h3>
+            <h3 className="text-base font-semibold tracking-tight mb-2">No stations configured</h3>
             <p className="text-sm text-muted-foreground mb-4">
               Add your favorite bus stations to get started
             </p>

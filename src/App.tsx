@@ -157,7 +157,10 @@ function AppContent() {
     <div className="min-h-screen bg-background pt-safe">
       <InstallPrompt />
       {/* Main Content */}
-      <div className="mx-auto max-w-[480px] p-3 pb-16">
+      <div
+        className="mx-auto max-w-[480px] p-3 pb-20"
+        style={{ paddingBottom: 'calc(5rem + env(safe-area-inset-bottom))' }}
+      >
         {renderTabContent()}
       </div>
       {/* Bottom Navigation */}

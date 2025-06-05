@@ -4,6 +4,7 @@ import { Button } from './button'
 import { Card, CardContent, CardHeader, CardTitle } from './card'
 import { Input } from './input'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from './tabs'
+import { Avatar, AvatarFallback } from './avatar'
 
 describe('UI components render', () => {
   it('Badge', () => {
@@ -39,5 +40,13 @@ describe('UI components render', () => {
       </Tabs>
     )
     expect(getByText('A')).toBeTruthy()
+  })
+  it('Avatar', () => {
+    const { getByLabelText } = render(
+      <Avatar>
+        <AvatarFallback aria-label="avatar-icon">U</AvatarFallback>
+      </Avatar>
+    )
+    expect(getByLabelText('avatar-icon')).toBeTruthy()
   })
 })

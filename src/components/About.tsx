@@ -42,7 +42,7 @@ export function About() {
                   />
                 </div>
               </div>
-              <h1 className="text-2xl font-bold mb-2">SG Bus Arrival</h1>
+              <h1 className="text-2xl font-bold tracking-tight mb-2">SG Bus Arrival</h1>
               <p className="text-blue-100 text-sm">
                 Real-time bus tracking for Singapore commuters
               </p>
