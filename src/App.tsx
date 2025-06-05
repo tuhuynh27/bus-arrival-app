@@ -4,6 +4,8 @@ import { Toaster, toast } from 'sonner';
 import { BottomNavigation } from './components/BottomNavigation';
 import { About } from './components/About';
 import { OfflineModal } from './components/OfflineModal';
+import { UpdatePrompt } from './components/UpdatePrompt';
+import { InstallPrompt } from './components/InstallPrompt';
 import { useLocalStorage } from './hooks/useLocalStorage';
 import { useOfflineDetection } from './hooks/useOfflineDetection';
 import { useNotifications } from './hooks/useNotifications';
@@ -153,6 +155,7 @@ function AppContent() {
 
   return (
     <div className="min-h-screen bg-background pt-safe">
+      <InstallPrompt />
       {/* Main Content */}
       <div className="mx-auto max-w-[480px] p-3 pb-16">
         {renderTabContent()}
@@ -174,6 +177,7 @@ function AppContent() {
         lastRetryTime={lastRetryTime}
         onRetry={handleOfflineRetry}
       />
+      <UpdatePrompt />
     </div>
   );
 }
