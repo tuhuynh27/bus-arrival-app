@@ -31,15 +31,13 @@ export function StationConfigComponent({
   const [newBusNumberInputs, setNewBusNumberInputs] = useState<Record<string, string>>({});
   const [stationSuggestions, setStationSuggestions] = useState<StationSuggestion[]>([]);
   const [busNumberSuggestions, setBusNumberSuggestions] = useState<Record<string, string[]>>({});
-  const [locationFetched, setLocationFetched] = useState(false);
 
   const handleStationInputFocus = () => {
-    if (locationFetched || newStationInput.length > 0) return;
-    setLocationFetched(true);
+    if (newStationInput.trim().length > 0) return;
     if ('geolocation' in navigator) {
       navigator.geolocation.getCurrentPosition(
         (pos) => {
-          if (newStationInput.length >= 2) return;
+          if (newStationInput.trim().length > 0) return;
           const { latitude, longitude } = pos.coords;
           const suggestions = Object.keys(stopsData)
             .map((stationId) => {
@@ -57,7 +55,7 @@ export function StationConfigComponent({
               };
             })
             .sort((a, b) => a.distance - b.distance)
-            .slice(0, 8)
+            .slice(0, 5)
             .map(({ stationId, name, road, displayName }) => ({ stationId, name, road, displayName }));
           setStationSuggestions(suggestions);
         },
@@ -128,7 +126,7 @@ export function StationConfigComponent({
         return stop.name.toLowerCase().includes(searchValue) || 
                stop.road.toLowerCase().includes(searchValue) ||
                stop.stationId.includes(value);
-      }).slice(0, 8);
+      }).slice(0, 5);
 
       setStationSuggestions(suggestions);
     } else {
@@ -244,11 +242,14 @@ export function StationConfigComponent({
   return (
     <div className="space-y-6">
       <Card>
-        <CardHeader>
+        <CardHeader className="space-y-1">
           <CardTitle className="flex items-center">
             <Plus className="mr-2 w-5 h-5" />
             Add Bus Station
           </CardTitle>
+          <p className="text-sm text-muted-foreground">
+            Nearby stops will be suggested using your location. Please allow access.
+          </p>
         </CardHeader>
         <CardContent>
           <form onSubmit={addStation} className="flex gap-2 relative">
