@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Input } from './ui/input';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
-import { Plus, Trash2, X } from 'lucide-react';
+import { Plus, Trash2, X, GripVertical } from 'lucide-react';
 import { toast } from 'sonner';
 import type { StationConfig, StopData, ServiceData } from '../types';
 import {
@@ -15,6 +15,10 @@ import {
   closestCenter,
 } from '@dnd-kit/core';
 import type { DragEndEvent } from '@dnd-kit/core';
+import type {
+  DraggableAttributes,
+  DraggableSyntheticListeners,
+} from '@dnd-kit/core';
 import {
   SortableContext,
   useSortable,
@@ -42,12 +46,17 @@ function SortableStationCard({
   children,
 }: {
   config: StationConfig;
-  children: React.ReactNode;
+  children: (handleProps: {
+    attributes: DraggableAttributes;
+    listeners: DraggableSyntheticListeners;
+    setActivatorNodeRef: (element: HTMLElement | null) => void;
+  }) => React.ReactNode;
 }) {
   const {
     attributes,
     listeners,
     setNodeRef,
+    setActivatorNodeRef,
     transform,
     transition,
     isDragging,
@@ -61,8 +70,8 @@ function SortableStationCard({
   };
 
   return (
-    <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
-      {children}
+    <div ref={setNodeRef} style={style}>
+      {children({ attributes, listeners, setActivatorNodeRef })}
     </div>
   );
 }
@@ -299,31 +308,42 @@ export function StationConfigComponent({
 
             return (
               <SortableStationCard key={config.stationId} config={config}>
-                <Card>
-                  <CardHeader className="pb-3">
-                    <div className="flex justify-between items-start gap-2">
-                      <div className="flex-1 min-w-0">
-                        <CardTitle className="text-lg break-words">
-                          {getStationDisplayName(config.stationId, true)}
-                  </CardTitle>
-                  <div className="text-xs text-muted-foreground mt-1">
-                    ID: {config.stationId}
-                    {availableBuses.length > 0 && (
-                      <span className="ml-2">• {availableBuses.length} buses serve this stop</span>
-                    )}
-                  </div>
-                </div>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => removeStation(config.stationId)}
-                  className="flex-shrink-0"
-                >
-                  <Trash2 className="w-4 h-4" />
-                </Button>
-              </div>
-            </CardHeader>
-            <CardContent>
+                {({ attributes, listeners, setActivatorNodeRef }) => (
+                  <Card>
+                    <CardHeader className="pb-3">
+                      <div className="flex justify-between items-start gap-2">
+                        <div className="flex items-start gap-2 flex-1 min-w-0">
+                          <div
+                            {...attributes}
+                            {...listeners}
+                            ref={setActivatorNodeRef}
+                            className="mt-1 cursor-grab active:cursor-grabbing text-muted-foreground"
+                          >
+                            <GripVertical className="w-4 h-4" />
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <CardTitle className="text-lg break-words">
+                              {getStationDisplayName(config.stationId, true)}
+                            </CardTitle>
+                            <div className="text-xs text-muted-foreground mt-1">
+                              ID: {config.stationId}
+                              {availableBuses.length > 0 && (
+                                <span className="ml-2">• {availableBuses.length} buses serve this stop</span>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => removeStation(config.stationId)}
+                          className="flex-shrink-0"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    </CardHeader>
+                  <CardContent>
               <div className="flex flex-wrap gap-2 mb-3">
                 {config.busNumbers.map(busNo => (
                   <Badge key={busNo} variant="secondary" className="min-w-[40px] min-h-[40px] h-10 px-4 py-2 text-base flex items-center justify-center rounded-lg gap-1">
@@ -365,6 +385,7 @@ export function StationConfigComponent({
               )}
             </CardContent>
           </Card>
+                )}
               </SortableStationCard>
             );
           })}
