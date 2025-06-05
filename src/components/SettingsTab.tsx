@@ -176,8 +176,8 @@ export function SettingsTab({
               min={1}
               max={10}
               step={1}
-              value={[notifyMinutes]}
-              onValueChange={(v) => setNotifyMinutes(v[0])}
+              value={notifyMinutes}
+              onChange={(e) => setNotifyMinutes(Number(e.target.value))}
               className="flex-1"
             />
             <span className="text-sm text-muted-foreground">
