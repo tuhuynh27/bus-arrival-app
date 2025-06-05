@@ -14,8 +14,6 @@ export function useServiceWorker(): SwState {
     if (!('serviceWorker' in navigator)) return
 
     let mounted = true
-    const controllerChange = () => window.location.reload()
-    navigator.serviceWorker.addEventListener('controllerchange', controllerChange)
 
     navigator.serviceWorker.getRegistration().then(async (reg) => {
       try {
@@ -28,7 +26,13 @@ export function useServiceWorker(): SwState {
       if (!mounted || !reg) return
 
       setRegistration(reg)
-      if (reg.waiting) setNeedRefresh(true)
+      if (reg.waiting) {
+        if (!navigator.serviceWorker.controller) {
+          reg.waiting.postMessage({ type: 'SKIP_WAITING' })
+        } else {
+          setNeedRefresh(true)
+        }
+      }
 
       reg.addEventListener('updatefound', () => {
         const newWorker = reg!.installing
@@ -43,12 +47,17 @@ export function useServiceWorker(): SwState {
 
     return () => {
       mounted = false
-      navigator.serviceWorker.removeEventListener('controllerchange', controllerChange)
     }
   }, [])
 
   const updateServiceWorker = () => {
-    registration?.waiting?.postMessage({ type: 'SKIP_WAITING' })
+    if (!registration?.waiting) return
+    const reload = () => {
+      navigator.serviceWorker.removeEventListener('controllerchange', reload)
+      window.location.reload()
+    }
+    navigator.serviceWorker.addEventListener('controllerchange', reload)
+    registration.waiting.postMessage({ type: 'SKIP_WAITING' })
   }
 
   return { needRefresh, updateServiceWorker, setNeedRefresh }
