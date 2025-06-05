@@ -4,9 +4,10 @@ import type { TabType } from '../types';
 interface BottomNavigationProps {
   activeTab: TabType;
   onTabChange: (tab: TabType) => void;
+  offsetBottom?: number;
 }
 
-export function BottomNavigation({ activeTab, onTabChange }: BottomNavigationProps) {
+export function BottomNavigation({ activeTab, onTabChange, offsetBottom = 0 }: BottomNavigationProps) {
   const tabs = [
     { id: 'home' as const, label: 'Home', icon: Home },
     { id: 'settings' as const, label: 'Settings', icon: Settings },
@@ -16,8 +17,11 @@ export function BottomNavigation({ activeTab, onTabChange }: BottomNavigationPro
 
   return (
     <nav
-      className="fixed bottom-0 left-1/2 transform -translate-x-1/2 w-full max-w-[480px] bg-background/95 backdrop-blur-xl border-t border-border/50 z-50"
-      style={{ paddingBottom: 'calc(env(safe-area-inset-bottom) / 2)' }}
+      className="fixed left-1/2 transform -translate-x-1/2 w-full max-w-[480px] bg-background/95 backdrop-blur-xl border-t border-border/50 z-50"
+      style={{
+        paddingBottom: 'calc(env(safe-area-inset-bottom) / 2)',
+        bottom: offsetBottom,
+      }}
     >
       <div className="flex justify-around items-center py-2 px-4">
         {tabs.map((tab) => {
