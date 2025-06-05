@@ -28,9 +28,7 @@ export function StationConfigComponent({
   servicesData 
 }: StationConfigProps) {
   const [newStationInput, setNewStationInput] = useState('');
-  const [newBusNumberInputs, setNewBusNumberInputs] = useState<Record<string, string>>({});
   const [stationSuggestions, setStationSuggestions] = useState<StationSuggestion[]>([]);
-  const [busNumberSuggestions, setBusNumberSuggestions] = useState<Record<string, string[]>>({});
 
   const handleStationInputFocus = () => {
     if (newStationInput.trim().length > 0) return;
@@ -156,57 +154,8 @@ export function StationConfigComponent({
   const removeStation = (stationId: string) => {
     const updatedConfigs = stationConfigs.filter(s => s.stationId !== stationId);
     onUpdateConfigs(updatedConfigs);
-    setNewBusNumberInputs(inputs => {
-      const newInputs = { ...inputs };
-      delete newInputs[stationId];
-      return newInputs;
-    });
-    setBusNumberSuggestions(suggestions => {
-      const newSuggestions = { ...suggestions };
-      delete newSuggestions[stationId];
-      return newSuggestions;
-    });
   };
 
-  const handleBusNumberInputChange = (stationId: string, value: string) => {
-    setNewBusNumberInputs(inputs => ({ ...inputs, [stationId]: value }));
-    
-    if (value.length > 0 && stationToBusNumbers[stationId]) {
-      const availableBuses = stationToBusNumbers[stationId];
-      const suggestions = availableBuses
-        .filter(busNo => 
-          busNo.toLowerCase().includes(value.toLowerCase()) &&
-          !stationConfigs.find(s => s.stationId === stationId)?.busNumbers.includes(busNo)
-        )
-        .slice(0, 8);
-      setBusNumberSuggestions(suggestionsObj => ({ ...suggestionsObj, [stationId]: suggestions }));
-    } else {
-      setBusNumberSuggestions(suggestionsObj => ({ ...suggestionsObj, [stationId]: [] }));
-    }
-  };
-
-  const addBusNumber = (e: React.FormEvent, stationId: string) => {
-    e.preventDefault();
-    const newBusNumber = newBusNumberInputs[stationId]?.trim();
-    if (newBusNumber && newBusNumber !== '') {
-      // Check if this bus actually serves this station
-      const availableBuses = stationToBusNumbers[stationId] || [];
-      if (!availableBuses.includes(newBusNumber)) {
-        // Show warning but still allow adding (maybe for future routes)
-        console.warn(`Bus ${newBusNumber} may not serve station ${stationId}`);
-      }
-
-      const updatedConfigs = stationConfigs.map(s => {
-        if (s.stationId === stationId && !s.busNumbers.includes(newBusNumber)) {
-          return { ...s, busNumbers: [...s.busNumbers, newBusNumber] };
-        }
-        return s;
-      });
-      onUpdateConfigs(updatedConfigs);
-      setNewBusNumberInputs(inputs => ({ ...inputs, [stationId]: '' }));
-      setBusNumberSuggestions(suggestions => ({ ...suggestions, [stationId]: [] }));
-    }
-  };
 
   const addBusNumberDirect = (stationId: string, busNo: string) => {
     const updatedConfigs = stationConfigs.map(s => {
@@ -216,8 +165,6 @@ export function StationConfigComponent({
       return s;
     });
     onUpdateConfigs(updatedConfigs);
-    setNewBusNumberInputs(inputs => ({ ...inputs, [stationId]: '' }));
-    setBusNumberSuggestions(suggestions => ({ ...suggestions, [stationId]: [] }));
   };
 
   const removeBusNumber = (stationId: string, busNo: string) => {
@@ -235,9 +182,6 @@ export function StationConfigComponent({
     setStationSuggestions([]);
   };
 
-  const handleBusNumberSelect = (stationId: string, busNo: string) => {
-    addBusNumberDirect(stationId, busNo);
-  };
 
   return (
     <div className="space-y-6">
@@ -259,6 +203,11 @@ export function StationConfigComponent({
                 value={newStationInput}
                 onChange={(e) => handleStationInputChange(e.target.value)}
                 onFocus={handleStationInputFocus}
+                onBlur={() => {
+                  setTimeout(() => {
+                    setStationSuggestions([])
+                  }, 100)
+                }}
                 className="text-base placeholder:text-base"
               />
               {stationSuggestions.length > 0 && (
@@ -327,53 +276,11 @@ export function StationConfigComponent({
                   </Badge>
                 ))}
               </div>
-              
-              <form onSubmit={(e) => addBusNumber(e, config.stationId)} className="flex gap-2 relative">
-                <div className="relative flex-1">
-                  <Input
-                    placeholder={`Add Bus Number${availableBuses.length > 0 ? ` (${availableBuses.length} available)` : ''}`}
-                    value={newBusNumberInputs[config.stationId] || ''}
-                    onChange={(e) => handleBusNumberInputChange(config.stationId, e.target.value)}
-                    className="text-base placeholder:text-base"
-                  />
-                  {busNumberSuggestions[config.stationId] && busNumberSuggestions[config.stationId].length > 0 && (
-                    <div className="absolute top-full left-0 w-full bg-background border border-border rounded-md shadow-lg z-10 max-h-48 overflow-y-auto">
-                      {busNumberSuggestions[config.stationId].map((busNo, index) => (
-                        <div
-                          key={index}
-                          className="p-3 hover:bg-accent cursor-pointer text-sm border-b border-border/50 last:border-b-0"
-                          onClick={() => handleBusNumberSelect(config.stationId, busNo)}
-                        >
-                          <div className="flex items-center justify-between">
-                            <span className="font-medium">{busNo}</span>
-                            <Badge variant="outline" className="text-xs">
-                              Available
-                            </Badge>
-                          </div>
-                          {servicesData[busNo]?.name && (
-                            <div className="text-xs text-muted-foreground mt-1">
-                              {servicesData[busNo].name}
-                            </div>
-                          )}
-                        </div>
-                      ))}
-                      {availableBuses.length === 0 && (
-                        <div className="p-3 text-sm text-muted-foreground text-center">
-                          No bus data available for this station
-                        </div>
-                      )}
-                    </div>
-                  )}
-                </div>
-                <Button type="submit" size="sm">
-                  <Plus className="w-4 h-4" />
-                </Button>
-              </form>
-              
+
               {availableBuses.length > 0 && (
                 <div className="mt-3 p-3 bg-muted/50 rounded-md">
                   <div className="text-xs font-medium text-muted-foreground mb-2">
-                    Buses serving this station:
+                    Buses serving this station (tap to add):
                   </div>
                   <div className="flex flex-wrap gap-2">
                     {availableBuses.map(busNo => (
