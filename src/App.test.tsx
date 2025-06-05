@@ -2,9 +2,6 @@ import { render } from '@testing-library/react'
 import { vi } from 'vitest'
 vi.mock('./assets/bus.png', () => ({ default: '' }))
 vi.mock('@/assets/bus.png', () => ({ default: '' }))
-vi.mock('virtual:pwa-register/react', () => ({
-  useRegisterSW: () => ({ needRefresh: [false, () => {}], updateServiceWorker: () => {} })
-}))
 beforeAll(() => {
   Object.defineProperty(window, 'matchMedia', {
     writable: true,

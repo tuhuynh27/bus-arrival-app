@@ -1,13 +1,10 @@
 import { DownloadCloud, RefreshCw } from 'lucide-react'
-import { useRegisterSW } from 'virtual:pwa-register/react'
+import { useServiceWorker } from '../hooks/useServiceWorker'
 import { Button } from './ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card'
 
 export function UpdatePrompt() {
-  const {
-    needRefresh: [needRefresh, setNeedRefresh],
-    updateServiceWorker,
-  } = useRegisterSW({ immediate: true })
+  const { needRefresh, updateServiceWorker, setNeedRefresh } = useServiceWorker()
 
   if (!needRefresh) return null
 
@@ -26,7 +23,7 @@ export function UpdatePrompt() {
           <p className="text-sm text-muted-foreground">A new version of the app is available.</p>
           <div className="flex gap-3 justify-center">
             <Button variant="outline" onClick={close}>Later</Button>
-            <Button onClick={() => updateServiceWorker(true)}>
+            <Button onClick={updateServiceWorker}>
               <RefreshCw className="w-4 h-4 mr-2" />
               Refresh
             </Button>
