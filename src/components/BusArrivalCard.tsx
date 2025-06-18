@@ -122,11 +122,11 @@ export function BusArrivalCard({ bus, routeName, onNotify }: BusArrivalCardProps
           {/* Right Actions */}
           {onNotify && !isArrived && (
             <div className="flex-shrink-0">
-              <Button 
-                variant="ghost" 
+              <Button
+                variant="ghost"
                 size="sm"
                 onClick={() => onNotify(bus)}
-                className="h-8 w-8 p-0 hover:bg-primary/10"
+                className="h-8 w-8 p-0 hover:bg-primary/10 active:bg-primary/20 transition-colors"
               >
                 <Bell className="w-4 h-4" />
               </Button>

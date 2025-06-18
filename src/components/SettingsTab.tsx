@@ -14,6 +14,9 @@ import { fetchUserSettings, saveUserSettings } from '../services/user'
 import { checkUser, register, login } from '../services/auth'
 import type { StationConfig, StopData, ServiceData } from '../types'
 
+const fontSizeOptions = [14, 16, 18, 20]
+const fontSizeLabels = ['Very Compact', 'Compact', 'Default', 'Large']
+
 interface SettingsTabProps {
   stationConfigs: StationConfig[];
   setStationConfigs: (configs: StationConfig[]) => void;
@@ -38,6 +41,8 @@ export function SettingsTab({
   const [pendingEmail, setPendingEmail] = useState('')
   const [modalMode, setModalMode] = useState<'enter' | 'setup' | null>(null)
   const [notifyMinutes, setNotifyMinutes] = useLocalStorage<number>('notifyLeadTime', 2)
+
+  const fontSizeIndex = Math.max(0, fontSizeOptions.indexOf(fontSize))
 
   const decodeJwt = (token: string) => {
     const base64 = token
@@ -193,23 +198,23 @@ export function SettingsTab({
       {/* Font Size Settings */}
       <Card>
         <CardHeader className="pb-2 space-y-1">
-          <CardTitle className="text-base">Font Size</CardTitle>
+          <CardTitle className="text-base">Text Size</CardTitle>
           <p className="text-sm text-muted-foreground">
-            Adjust the app's text size to your preference.
+            Adjust how large or small text appears.
           </p>
         </CardHeader>
         <CardContent className="pt-0">
           <div className="flex items-center gap-2">
             <Slider
-              min={12}
-              max={20}
+              min={0}
+              max={3}
               step={1}
-              value={[fontSize]}
-              onValueChange={(v) => setFontSize(v[0])}
+              value={[fontSizeIndex]}
+              onValueChange={(v) => setFontSize(fontSizeOptions[v[0]])}
               className="flex-1"
             />
             <span className="text-sm text-muted-foreground">
-              {fontSize}px
+              {fontSizeLabels[fontSizeIndex]}
             </span>
           </div>
         </CardContent>
