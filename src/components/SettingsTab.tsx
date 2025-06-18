@@ -222,27 +222,24 @@ export function SettingsTab({
             )}
           </div>
         )}
-        <div className="px-4 py-3 space-y-1">
-          <div className="flex items-center justify-between gap-4">
-            <div className="text-sm font-medium leading-none">Alerts</div>
-            <div className="flex items-center gap-2">
-              <Slider
-                min={1}
-                max={10}
-                step={1}
-                value={[notifyMinutes]}
-                onValueChange={(v) => setNotifyMinutes(v[0])}
-                className="w-32 sm:w-40"
-              />
-              <span className="text-sm text-muted-foreground">
-                {notifyMinutes} minute{notifyMinutes > 1 ? 's' : ''} before
-              </span>
-            </div>
+        <SettingRow
+          label="Alerts"
+          description="Choose how many minutes before arrival you're notified."
+        >
+          <div className="flex items-center gap-2">
+            <Slider
+              min={1}
+              max={10}
+              step={1}
+              value={[notifyMinutes]}
+              onValueChange={(v) => setNotifyMinutes(v[0])}
+              className="w-32 sm:w-40"
+            />
+            <span className="text-sm text-muted-foreground">
+              {notifyMinutes} minute{notifyMinutes > 1 ? 's' : ''} before
+            </span>
           </div>
-          <div className="text-xs text-muted-foreground">
-            Choose how many minutes before arrival you're notified.
-          </div>
-        </div>
+        </SettingRow>
         <SettingRow
           label="Text Size"
           description="Adjust how large or small text appears."
