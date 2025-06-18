@@ -134,15 +134,15 @@ export function SettingsTab({
           <Tabs
             value={uiMode}
             onValueChange={(v) => setUiMode(v as 'advance' | 'basic')}
-            className="w-32"
+            className="min-w-[9rem]"
           >
             <TabsList className="grid grid-cols-2 w-full">
               <TabsTrigger value="advance" className="flex items-center gap-1 py-1">
-                <Rocket className="w-4 h-4" />
+                <Rocket size={16} className="shrink-0" />
                 <span>Advance</span>
               </TabsTrigger>
               <TabsTrigger value="basic" className="flex items-center gap-1 py-1">
-                <Circle className="w-4 h-4" />
+                <Circle size={16} className="shrink-0" />
                 <span>Basic</span>
               </TabsTrigger>
             </TabsList>
@@ -160,12 +160,12 @@ export function SettingsTab({
           >
             {theme === 'light' ? (
               <>
-                <Moon className="w-4 h-4" />
+                <Moon size={16} className="shrink-0" />
                 <span>Dark</span>
               </>
             ) : (
               <>
-                <Sun className="w-4 h-4" />
+                <Sun size={16} className="shrink-0" />
                 <span>Light</span>
               </>
             )}
@@ -181,9 +181,9 @@ export function SettingsTab({
               <div className="space-y-2">
                 <div className="flex items-center justify-between gap-2">
                   <div className="flex items-center gap-2">
-                    <Avatar className="size-8">
+                    <Avatar className="w-[32px] h-[32px]">
                       <AvatarFallback>
-                        {email ? email.charAt(0).toUpperCase() : <User className="w-4 h-4" />}
+                        {email ? email.charAt(0).toUpperCase() : <User size={16} className="shrink-0" />}
                       </AvatarFallback>
                     </Avatar>
                     <span className="text-sm break-all">{email}</span>
@@ -222,24 +222,27 @@ export function SettingsTab({
             )}
           </div>
         )}
-        <SettingRow
-          label="Alerts"
-          description="Choose how many minutes before arrival you're notified."
-        >
-          <div className="flex items-center gap-2">
-            <Slider
-              min={1}
-              max={10}
-              step={1}
-              value={[notifyMinutes]}
-              onValueChange={(v) => setNotifyMinutes(v[0])}
-              className="w-32 sm:w-40"
-            />
-            <span className="text-sm text-muted-foreground">
-              {notifyMinutes} minute{notifyMinutes > 1 ? 's' : ''} before
-            </span>
+        <div className="px-4 py-3 space-y-1">
+          <div className="flex items-center justify-between gap-4">
+            <div className="text-sm font-medium leading-none">Alerts</div>
+            <div className="flex items-center gap-2">
+              <Slider
+                min={1}
+                max={10}
+                step={1}
+                value={[notifyMinutes]}
+                onValueChange={(v) => setNotifyMinutes(v[0])}
+                className="w-32 sm:w-40"
+              />
+              <span className="text-sm text-muted-foreground">
+                {notifyMinutes} minute{notifyMinutes > 1 ? 's' : ''} before
+              </span>
+            </div>
           </div>
-        </SettingRow>
+          <div className="text-xs text-muted-foreground">
+            Choose how many minutes before arrival you're notified.
+          </div>
+        </div>
         <SettingRow
           label="Text Size"
           description="Adjust how large or small text appears."
