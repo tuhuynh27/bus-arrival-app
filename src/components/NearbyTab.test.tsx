@@ -29,7 +29,7 @@ describe('NearbyTab', () => {
     Object.defineProperty(global.navigator, 'geolocation', { value: mockGeoFail, configurable: true })
     const { getByText } = render(
       <QueryClientProvider client={queryClient}>
-        <NearbyTab stopsData={stopsData} servicesData={servicesData} handleNotify={() => {}} />
+        <NearbyTab stopsData={stopsData} servicesData={servicesData} handleNotify={() => {}} showRouteName={true} />
       </QueryClientProvider>
     )
     await waitFor(() => {
@@ -42,7 +42,7 @@ describe('NearbyTab', () => {
     ;(api.fetchBusArrivals as any).mockResolvedValue([])
     const { getByText } = render(
       <QueryClientProvider client={queryClient}>
-        <NearbyTab stopsData={stopsData} servicesData={servicesData} handleNotify={() => {}} />
+        <NearbyTab stopsData={stopsData} servicesData={servicesData} handleNotify={() => {}} showRouteName={true} />
       </QueryClientProvider>
     )
     await waitFor(() => {

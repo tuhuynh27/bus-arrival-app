@@ -3,6 +3,7 @@ import { Card, CardHeader, CardTitle, CardContent } from './ui/card'
 import { Button } from './ui/button'
 import { Input } from './ui/input'
 import { Slider } from './ui/slider'
+import { Tabs, TabsList, TabsTrigger } from './ui/tabs'
 import { Avatar, AvatarFallback } from './ui/avatar'
 import { User } from 'lucide-react'
 import { PasscodeModal } from './PasscodeModal'
@@ -24,6 +25,8 @@ interface SettingsTabProps {
   servicesData: ServiceData;
   fontSize: number;
   setFontSize: (size: number) => void;
+  uiMode: 'advance' | 'basic';
+  setUiMode: (mode: 'advance' | 'basic') => void;
 }
 
 export function SettingsTab({
@@ -33,6 +36,8 @@ export function SettingsTab({
   servicesData,
   fontSize,
   setFontSize,
+  uiMode,
+  setUiMode,
 }: SettingsTabProps) {
   const [email, setEmail] = useLocalStorage<string>('userEmail', '')
   const [emailInput, setEmailInput] = useState(email)
@@ -116,7 +121,25 @@ export function SettingsTab({
   return (
     <div className="space-y-3 pb-6">
       <h2 className="text-xl font-bold">Settings</h2>
+      {/* Mode Selection */}
+      <Card>
+        <CardHeader className="pb-2 space-y-1">
+          <CardTitle className="text-base">Mode</CardTitle>
+          <p className="text-sm text-muted-foreground">
+            Choose between advance and basic interfaces.
+          </p>
+        </CardHeader>
+        <CardContent className="pt-0">
+          <Tabs value={uiMode} onValueChange={(v) => setUiMode(v as 'advance' | 'basic')}>
+            <TabsList>
+              <TabsTrigger value="advance">Advance</TabsTrigger>
+              <TabsTrigger value="basic">Basic</TabsTrigger>
+            </TabsList>
+          </Tabs>
+        </CardContent>
+      </Card>
       {/* Login */}
+      {uiMode === 'advance' && (
       <Card>
         <CardHeader className="pb-2 space-y-1">
           <CardTitle className="text-base">Account</CardTitle>
@@ -171,6 +194,7 @@ export function SettingsTab({
           )}
         </CardContent>
       </Card>
+      )}
       {/* Notification Settings */}
       <Card>
         <CardHeader className="pb-2 space-y-1">
@@ -225,6 +249,7 @@ export function SettingsTab({
         onUpdateConfigs={setStationConfigs}
         stopsData={stopsData}
         servicesData={servicesData}
+        showAddStation={uiMode === 'advance'}
       />
       <PasscodeModal
         mode={modalMode || 'enter'}

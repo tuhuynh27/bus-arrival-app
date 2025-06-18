@@ -35,7 +35,8 @@ const queryClient = new QueryClient({
 });
 
 function AppContent() {
-  const [activeTab, setActiveTab] = useState<TabType>('home');
+  const [uiMode, setUiMode] = useLocalStorage<'advance' | 'basic'>('uiMode', 'advance');
+  const [activeTab, setActiveTab] = useState<TabType>(() => (uiMode === 'basic' ? 'nearby' : 'home'));
   const [theme, setTheme] = useLocalStorage<Theme>('theme', 'light');
   const [fontSize, setFontSize] = useLocalStorage<number>('fontSize', 16);
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -56,6 +57,13 @@ function AppContent() {
       }
     }
   }, [activeTab]);
+
+  // Adjust tab when switching modes
+  useEffect(() => {
+    if (uiMode === 'basic' && (activeTab === 'home' || activeTab === 'notifications')) {
+      setActiveTab('nearby');
+    }
+  }, [uiMode]);
 
   // Offline detection
   const { isOffline, isRetrying, retryCount, lastRetryTime, manualRetry } = useOfflineDetection();
@@ -130,6 +138,7 @@ function AppContent() {
             servicesData={servicesDataTyped}
             stopsData={stopsDataTyped}
             handleNotify={notifyBus}
+            showRouteName={uiMode === 'advance'}
           />
         );
       case 'nearby':
@@ -138,6 +147,7 @@ function AppContent() {
             servicesData={servicesDataTyped}
             stopsData={stopsDataTyped}
             handleNotify={notifyBus}
+            showRouteName={uiMode === 'advance'}
           />
         );
       case 'settings':
@@ -149,6 +159,8 @@ function AppContent() {
             servicesData={servicesDataTyped}
             fontSize={fontSize}
             setFontSize={setFontSize}
+            uiMode={uiMode}
+            setUiMode={setUiMode}
           />
         );
       case 'notifications':
@@ -166,6 +178,7 @@ function AppContent() {
           servicesData={servicesDataTyped}
           stopsData={stopsDataTyped}
           handleNotify={notifyBus}
+          showRouteName={uiMode === 'advance'}
         />;
     }
   };
@@ -181,7 +194,7 @@ function AppContent() {
         {renderTabContent()}
       </div>
       {/* Bottom Navigation */}
-      <BottomNavigation activeTab={activeTab} onTabChange={setActiveTab} />
+      <BottomNavigation activeTab={activeTab} onTabChange={setActiveTab} uiMode={uiMode} />
       {/* Toast Container */}
       <Toaster
         richColors

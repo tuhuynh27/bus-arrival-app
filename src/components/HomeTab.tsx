@@ -20,6 +20,7 @@ interface HomeTabProps {
   servicesData: ServiceData;
   stopsData: StopData;
   handleNotify: (bus: BusArrival) => void;
+  showRouteName: boolean;
 }
 
 export function StationCard({
@@ -28,12 +29,14 @@ export function StationCard({
   stopsData,
   onNotify,
   maxItems = Infinity,
+  showRouteName,
 }: {
   config: StationConfig;
   servicesData: ServiceData;
   stopsData: StopData;
   onNotify: (bus: BusArrival) => void;
   maxItems?: number;
+  showRouteName: boolean;
 }) {
   const [isExpanded, setIsExpanded] = useState(false);
   const { data: arrivals = [], isLoading, error } = useQuery<BusArrival[]>({
@@ -96,7 +99,7 @@ export function StationCard({
               <BusArrivalCard
                 key={`${bus.busNo}-${busIndex}`}
                 bus={bus}
-                routeName={servicesData[bus.busNo]?.name}
+                routeName={showRouteName ? servicesData[bus.busNo]?.name : undefined}
                 onNotify={onNotify}
               />
             ))}
@@ -150,6 +153,7 @@ export function HomeTab({
   servicesData,
   stopsData,
   handleNotify,
+  showRouteName,
 }: HomeTabProps) {
   return (
     <div className="space-y-3 pb-6">
@@ -213,6 +217,7 @@ export function HomeTab({
               servicesData={servicesData}
               stopsData={stopsData}
               onNotify={handleNotify}
+              showRouteName={showRouteName}
             />
           ))}
         </div>

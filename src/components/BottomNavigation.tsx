@@ -4,16 +4,19 @@ import type { TabType } from '../types';
 interface BottomNavigationProps {
   activeTab: TabType;
   onTabChange: (tab: TabType) => void;
+  uiMode: 'advance' | 'basic';
 }
 
-export function BottomNavigation({ activeTab, onTabChange }: BottomNavigationProps) {
+export function BottomNavigation({ activeTab, onTabChange, uiMode }: BottomNavigationProps) {
   const tabs = [
     { id: 'home' as const, label: 'Home', icon: Home },
     { id: 'nearby' as const, label: 'Nearby', icon: MapPin },
     { id: 'settings' as const, label: 'Settings', icon: Settings },
     { id: 'notifications' as const, label: 'Alerts', icon: Bell },
     { id: 'info' as const, label: 'About', icon: Info },
-  ];
+  ].filter(tab =>
+    uiMode === 'advance' ? true : tab.id !== 'home' && tab.id !== 'notifications'
+  );
 
   return (
     <nav
