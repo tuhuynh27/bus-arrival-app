@@ -136,19 +136,21 @@ function AppContent() {
             stationConfigs={stationConfigs}
             setActiveTab={setActiveTab}
             servicesData={servicesDataTyped}
-            stopsData={stopsDataTyped}
-            handleNotify={notifyBus}
-            showRouteName={uiMode === 'advance'}
-          />
+          stopsData={stopsDataTyped}
+          handleNotify={notifyBus}
+          showRouteName={uiMode === 'advance'}
+          showStationInfo={uiMode === 'advance'}
+        />
         );
       case 'nearby':
         return (
           <NearbyTab
             servicesData={servicesDataTyped}
             stopsData={stopsDataTyped}
-            handleNotify={notifyBus}
-            showRouteName={uiMode === 'advance'}
-          />
+          handleNotify={notifyBus}
+          showRouteName={uiMode === 'advance'}
+          showStationInfo={uiMode === 'advance'}
+        />
         );
       case 'settings':
         return (
@@ -179,6 +181,7 @@ function AppContent() {
           stopsData={stopsDataTyped}
           handleNotify={notifyBus}
           showRouteName={uiMode === 'advance'}
+          showStationInfo={uiMode === 'advance'}
         />;
     }
   };

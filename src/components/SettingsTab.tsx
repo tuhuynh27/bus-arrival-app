@@ -5,7 +5,7 @@ import { Input } from './ui/input'
 import { Slider } from './ui/slider'
 import { Tabs, TabsList, TabsTrigger } from './ui/tabs'
 import { Avatar, AvatarFallback } from './ui/avatar'
-import { User } from 'lucide-react'
+import { User, Rocket, Circle } from 'lucide-react'
 import { PasscodeModal } from './PasscodeModal'
 import { toast } from 'sonner'
 import { format } from 'date-fns'
@@ -130,10 +130,20 @@ export function SettingsTab({
           </p>
         </CardHeader>
         <CardContent className="pt-0">
-          <Tabs value={uiMode} onValueChange={(v) => setUiMode(v as 'advance' | 'basic')}>
-            <TabsList>
-              <TabsTrigger value="advance">Advance</TabsTrigger>
-              <TabsTrigger value="basic">Basic</TabsTrigger>
+          <Tabs
+            value={uiMode}
+            onValueChange={(v) => setUiMode(v as 'advance' | 'basic')}
+            className="w-full max-w-xs"
+          >
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="advance" className="flex items-center gap-1 py-1">
+                <Rocket className="w-4 h-4" />
+                <span>Advance</span>
+              </TabsTrigger>
+              <TabsTrigger value="basic" className="flex items-center gap-1 py-1">
+                <Circle className="w-4 h-4" />
+                <span>Basic</span>
+              </TabsTrigger>
             </TabsList>
           </Tabs>
         </CardContent>
@@ -244,13 +254,16 @@ export function SettingsTab({
         </CardContent>
       </Card>
       {/* Station Configuration */}
-      <StationConfigComponent
-        stationConfigs={stationConfigs}
-        onUpdateConfigs={setStationConfigs}
-        stopsData={stopsData}
-        servicesData={servicesData}
-        showAddStation={uiMode === 'advance'}
-      />
+      {uiMode === 'advance' && (
+        <StationConfigComponent
+          stationConfigs={stationConfigs}
+          onUpdateConfigs={setStationConfigs}
+          stopsData={stopsData}
+          servicesData={servicesData}
+          showAddStation
+          showStationCards
+        />
+      )}
       <PasscodeModal
         mode={modalMode || 'enter'}
         open={modalMode !== null && !!pendingEmail}

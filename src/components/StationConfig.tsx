@@ -40,6 +40,7 @@ interface StationConfigProps {
   stopsData: StopData;
   servicesData: ServiceData;
   showAddStation?: boolean;
+  showStationCards?: boolean;
 }
 
 function SortableStationCard({
@@ -82,6 +83,7 @@ export function StationConfigComponent({
   stopsData,
   servicesData,
   showAddStation = true,
+  showStationCards = true,
 }: StationConfigProps) {
   const [newStationInput, setNewStationInput] = useState('');
   const [stationSuggestions, setStationSuggestions] = useState<StationSuggestion[]>([]);
@@ -304,9 +306,10 @@ export function StationConfigComponent({
         </Card>
       )}
 
-      <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-        <SortableContext items={stationConfigs.map((s) => s.stationId)} strategy={verticalListSortingStrategy}>
-          {stationConfigs.map((config) => {
+      {showStationCards !== false && (
+        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+          <SortableContext items={stationConfigs.map((s) => s.stationId)} strategy={verticalListSortingStrategy}>
+            {stationConfigs.map((config) => {
             const availableBuses = stationToBusNumbers[config.stationId] || [];
 
             return (
@@ -391,9 +394,10 @@ export function StationConfigComponent({
                 )}
               </SortableStationCard>
             );
-          })}
-        </SortableContext>
-      </DndContext>
+            })}
+          </SortableContext>
+        </DndContext>
+      )}
     </div>
   );
 } 
