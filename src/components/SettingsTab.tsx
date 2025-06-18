@@ -19,6 +19,8 @@ interface SettingsTabProps {
   setStationConfigs: (configs: StationConfig[]) => void;
   stopsData: StopData;
   servicesData: ServiceData;
+  fontSize: number;
+  setFontSize: (size: number) => void;
 }
 
 export function SettingsTab({
@@ -26,6 +28,8 @@ export function SettingsTab({
   setStationConfigs,
   stopsData,
   servicesData,
+  fontSize,
+  setFontSize,
 }: SettingsTabProps) {
   const [email, setEmail] = useLocalStorage<string>('userEmail', '')
   const [emailInput, setEmailInput] = useState(email)
@@ -182,6 +186,30 @@ export function SettingsTab({
               />
             <span className="text-sm text-muted-foreground">
               {notifyMinutes} minute{notifyMinutes > 1 ? 's' : ''} before
+            </span>
+          </div>
+        </CardContent>
+      </Card>
+      {/* Font Size Settings */}
+      <Card>
+        <CardHeader className="pb-2 space-y-1">
+          <CardTitle className="text-base">Font Size</CardTitle>
+          <p className="text-sm text-muted-foreground">
+            Adjust the app's text size to your preference.
+          </p>
+        </CardHeader>
+        <CardContent className="pt-0">
+          <div className="flex items-center gap-2">
+            <Slider
+              min={12}
+              max={20}
+              step={1}
+              value={[fontSize]}
+              onValueChange={(v) => setFontSize(v[0])}
+              className="flex-1"
+            />
+            <span className="text-sm text-muted-foreground">
+              {fontSize}px
             </span>
           </div>
         </CardContent>

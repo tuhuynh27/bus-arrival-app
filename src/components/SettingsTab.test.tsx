@@ -6,6 +6,8 @@ const props = {
   setStationConfigs: () => {},
   stopsData: {},
   servicesData: {},
+  fontSize: 16,
+  setFontSize: () => {},
 }
 
 describe('SettingsTab', () => {
