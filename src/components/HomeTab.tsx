@@ -22,16 +22,18 @@ interface HomeTabProps {
   handleNotify: (bus: BusArrival) => void;
 }
 
-function StationCard({ 
-  config, 
-  servicesData, 
-  stopsData, 
-  onNotify 
-}: { 
-  config: StationConfig; 
-  servicesData: ServiceData; 
-  stopsData: StopData; 
-  onNotify: (bus: BusArrival) => void; 
+export function StationCard({
+  config,
+  servicesData,
+  stopsData,
+  onNotify,
+  maxItems = Infinity,
+}: {
+  config: StationConfig;
+  servicesData: ServiceData;
+  stopsData: StopData;
+  onNotify: (bus: BusArrival) => void;
+  maxItems?: number;
 }) {
   const [isExpanded, setIsExpanded] = useState(false);
   const { data: arrivals = [], isLoading, error } = useQuery<BusArrival[]>({
@@ -51,7 +53,9 @@ function StationCard({
 
   // Determine which buses to show
   const maxVisible = 3;
-  const visibleArrivals = isExpanded ? arrivals : arrivals.slice(0, maxVisible);
+  const visibleArrivals = isExpanded
+    ? arrivals.slice(0, maxItems)
+    : arrivals.slice(0, maxVisible);
   const hasMore = arrivals.length > maxVisible;
 
   return (
@@ -97,7 +101,7 @@ function StationCard({
               />
             ))}
             {/* Expand/Collapse Button */}
-            {hasMore && (
+            {(isExpanded || hasMore) && (
               <div className="pt-2">
                 <Button
                   variant="ghost"
@@ -117,7 +121,7 @@ function StationCard({
                       <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                       </svg>
-                      Show {arrivals.length - maxVisible} More
+                      Show {Math.min(arrivals.length, maxItems) - maxVisible} More
                     </>
                   )}
                 </Button>

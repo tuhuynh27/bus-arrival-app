@@ -27,4 +27,4 @@ export interface WeatherData {
 
 export type Theme = 'light' | 'dark';
 
-export type TabType = 'home' | 'settings' | 'notifications' | 'info'; 
+export type TabType = 'home' | 'nearby' | 'settings' | 'notifications' | 'info';
