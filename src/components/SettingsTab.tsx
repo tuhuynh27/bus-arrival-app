@@ -5,7 +5,7 @@ import { Input } from './ui/input'
 import { Slider } from './ui/slider'
 import { Tabs, TabsList, TabsTrigger } from './ui/tabs'
 import { Avatar, AvatarFallback } from './ui/avatar'
-import { User, Rocket, Circle } from 'lucide-react'
+import { User, Rocket, Circle, Moon, Sun } from 'lucide-react'
 import { PasscodeModal } from './PasscodeModal'
 import { toast } from 'sonner'
 import { format } from 'date-fns'
@@ -13,7 +13,7 @@ import { StationConfigComponent } from './StationConfig'
 import { useLocalStorage } from '../hooks/useLocalStorage'
 import { fetchUserSettings, saveUserSettings } from '../services/user'
 import { checkUser, register, login } from '../services/auth'
-import type { StationConfig, StopData, ServiceData } from '../types'
+import type { StationConfig, StopData, ServiceData, Theme } from '../types'
 
 const fontSizeOptions = [14, 16, 18, 20]
 const fontSizeLabels = ['Very Compact', 'Compact', 'Default', 'Large']
@@ -27,6 +27,8 @@ interface SettingsTabProps {
   setFontSize: (size: number) => void;
   uiMode: 'advance' | 'basic';
   setUiMode: (mode: 'advance' | 'basic') => void;
+  theme: Theme;
+  toggleTheme: () => void;
 }
 
 export function SettingsTab({
@@ -38,6 +40,8 @@ export function SettingsTab({
   setFontSize,
   uiMode,
   setUiMode,
+  theme,
+  toggleTheme,
 }: SettingsTabProps) {
   const [email, setEmail] = useLocalStorage<string>('userEmail', '')
   const [emailInput, setEmailInput] = useState(email)
@@ -146,6 +150,35 @@ export function SettingsTab({
               </TabsTrigger>
             </TabsList>
           </Tabs>
+        </CardContent>
+      </Card>
+      {/* Theme Toggle */}
+      <Card>
+        <CardHeader className="pb-2 space-y-1">
+          <CardTitle className="text-base">Theme</CardTitle>
+          <p className="text-sm text-muted-foreground">
+            Switch between light and dark mode.
+          </p>
+        </CardHeader>
+        <CardContent className="pt-0">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={toggleTheme}
+            className="flex items-center gap-2"
+          >
+            {theme === 'light' ? (
+              <>
+                <Moon className="w-4 h-4" />
+                <span>Dark</span>
+              </>
+            ) : (
+              <>
+                <Sun className="w-4 h-4" />
+                <span>Light</span>
+              </>
+            )}
+          </Button>
         </CardContent>
       </Card>
       {/* Login */}

@@ -159,11 +159,13 @@ function AppContent() {
             setStationConfigs={setStationConfigs}
             stopsData={stopsDataTyped}
             servicesData={servicesDataTyped}
-            fontSize={fontSize}
-            setFontSize={setFontSize}
-            uiMode={uiMode}
-            setUiMode={setUiMode}
-          />
+          fontSize={fontSize}
+          setFontSize={setFontSize}
+          uiMode={uiMode}
+          setUiMode={setUiMode}
+          theme={theme}
+          toggleTheme={toggleTheme}
+        />
         );
       case 'notifications':
         return <NotificationsTab />;
