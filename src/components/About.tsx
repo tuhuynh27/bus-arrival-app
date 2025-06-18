@@ -1,7 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
-import { Badge } from './ui/badge';
-import { RefreshCw, MapPin, Bell, Github, ExternalLink, Code2, Star, Heart } from 'lucide-react';
+import { RefreshCw, MapPin, Bell, Github, ExternalLink, Star, Heart } from 'lucide-react';
 import busIcon from "@/assets/bus.png";
 
 export function About() {
@@ -46,6 +45,9 @@ export function About() {
               <p className="text-blue-100 text-sm">
                 Real-time bus tracking for Singapore commuters
               </p>
+              <p className="text-blue-100 text-xs">
+                Your daily commute companion
+              </p>
             </div>
           </CardContent>
         </Card>
@@ -59,34 +61,36 @@ export function About() {
             Key Features
           </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-3">
-          <div className="flex items-start gap-3">
-            <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900 rounded-lg flex items-center justify-center flex-shrink-0">
-              <MapPin className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+        <CardContent>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="flex items-start gap-3">
+              <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center flex-shrink-0">
+                <MapPin className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+              </div>
+              <div>
+                <h4 className="font-medium text-sm">Pin Your Stops</h4>
+                <p className="text-xs text-muted-foreground">Save frequently used stops for quick access</p>
+              </div>
             </div>
-            <div>
-              <h4 className="font-medium text-sm">Pin Your Stops</h4>
-              <p className="text-xs text-muted-foreground">Save frequently used bus stops for quick access</p>
+
+            <div className="flex items-start gap-3">
+              <div className="w-10 h-10 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center flex-shrink-0">
+                <RefreshCw className="w-5 h-5 text-green-600 dark:text-green-400" />
+              </div>
+              <div>
+                <h4 className="font-medium text-sm">Live Updates</h4>
+                <p className="text-xs text-muted-foreground">Real-time arrival info</p>
+              </div>
             </div>
-          </div>
-          
-          <div className="flex items-start gap-3">
-            <div className="w-8 h-8 bg-green-100 dark:bg-green-900 rounded-lg flex items-center justify-center flex-shrink-0">
-              <RefreshCw className="w-4 h-4 text-green-600 dark:text-green-400" />
-            </div>
-            <div>
-              <h4 className="font-medium text-sm">Live Updates</h4>
-              <p className="text-xs text-muted-foreground">Real-time bus arrival information</p>
-            </div>
-          </div>
-          
-          <div className="flex items-start gap-3">
-            <div className="w-8 h-8 bg-purple-100 dark:bg-purple-900 rounded-lg flex items-center justify-center flex-shrink-0">
-              <Bell className="w-4 h-4 text-purple-600 dark:text-purple-400" />
-            </div>
-            <div>
-              <h4 className="font-medium text-sm">Smart Notifications</h4>
-              <p className="text-xs text-muted-foreground">Get notified before your bus arrives</p>
+
+            <div className="flex items-start gap-3">
+              <div className="w-10 h-10 bg-purple-100 dark:bg-purple-900 rounded-full flex items-center justify-center flex-shrink-0">
+                <Bell className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+              </div>
+              <div>
+                <h4 className="font-medium text-sm">Smart Alerts</h4>
+                <p className="text-xs text-muted-foreground">Get notified before your bus arrives</p>
+              </div>
             </div>
           </div>
         </CardContent>
@@ -97,7 +101,7 @@ export function About() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-lg">
             <Heart className="w-5 h-5 text-red-500" />
-            Connect with Me
+            Connect & Support
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
@@ -129,31 +133,6 @@ export function About() {
         </CardContent>
       </Card>
 
-      {/* Tech Stack */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-lg">
-            <Code2 className="w-5 h-5 text-blue-500" />
-            Built With
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex flex-wrap gap-2">
-            {[
-              { name: 'React', color: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200' },
-              { name: 'TypeScript', color: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200' },
-              { name: 'Vite', color: 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200' },
-              { name: 'TanStack Query', color: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200' },
-              { name: 'shadcn/ui', color: 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200' },
-              { name: 'Tailwind CSS', color: 'bg-cyan-100 text-cyan-800 dark:bg-cyan-900 dark:text-cyan-200' },
-            ].map((tech) => (
-              <Badge key={tech.name} className={`${tech.color} border-0 text-xs px-2 py-1`}>
-                {tech.name}
-              </Badge>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
 
       {/* Footer */}
       <div className="text-center pt-2">
