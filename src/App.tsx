@@ -12,6 +12,7 @@ import { useNotifications } from './hooks/useNotifications';
 import type { StationConfig, TabType, Theme, StopData, ServiceData } from './types';
 import './App.css';
 import { HomeTab } from './components/HomeTab';
+import { NearbyTab } from './components/NearbyTab';
 import { SettingsTab } from './components/SettingsTab';
 import { NotificationsTab } from './components/NotificationsTab';
 // Import static data directly for instant loading
@@ -126,6 +127,14 @@ function AppContent() {
             refreshAllData={refreshAllData}
             stationConfigs={stationConfigs}
             setActiveTab={setActiveTab}
+            servicesData={servicesDataTyped}
+            stopsData={stopsDataTyped}
+            handleNotify={notifyBus}
+          />
+        );
+      case 'nearby':
+        return (
+          <NearbyTab
             servicesData={servicesDataTyped}
             stopsData={stopsDataTyped}
             handleNotify={notifyBus}

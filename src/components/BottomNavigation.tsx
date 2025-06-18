@@ -1,4 +1,4 @@
-import { Home, Settings, Bell, Info } from 'lucide-react';
+import { Home, Settings, Bell, Info, MapPin } from 'lucide-react';
 import type { TabType } from '../types';
 
 interface BottomNavigationProps {
@@ -9,6 +9,7 @@ interface BottomNavigationProps {
 export function BottomNavigation({ activeTab, onTabChange }: BottomNavigationProps) {
   const tabs = [
     { id: 'home' as const, label: 'Home', icon: Home },
+    { id: 'nearby' as const, label: 'Nearby', icon: MapPin },
     { id: 'settings' as const, label: 'Settings', icon: Settings },
     { id: 'notifications' as const, label: 'Alerts', icon: Bell },
     { id: 'info' as const, label: 'About', icon: Info },
