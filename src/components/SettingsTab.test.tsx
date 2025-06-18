@@ -10,11 +10,18 @@ const props = {
   setFontSize: () => {},
   uiMode: 'advance' as const,
   setUiMode: () => {},
+  theme: 'light' as const,
+  toggleTheme: () => {},
 }
 
 describe('SettingsTab', () => {
   it('renders heading', () => {
     const { getByText } = render(<SettingsTab {...props} />)
     expect(getByText('Settings')).toBeTruthy()
+  })
+
+  it('shows theme toggle', () => {
+    const { getByText } = render(<SettingsTab {...props} />)
+    expect(getByText('Theme')).toBeTruthy()
   })
 })
