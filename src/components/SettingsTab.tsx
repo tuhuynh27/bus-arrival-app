@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Card, CardHeader, CardTitle, CardContent } from './ui/card'
+import { Card } from './ui/card'
 import { Button } from './ui/button'
 import { Input } from './ui/input'
 import { Slider } from './ui/slider'
@@ -10,6 +10,7 @@ import { PasscodeModal } from './PasscodeModal'
 import { toast } from 'sonner'
 import { format } from 'date-fns'
 import { StationConfigComponent } from './StationConfig'
+import { SettingRow } from './SettingRow'
 import { useLocalStorage } from '../hooks/useLocalStorage'
 import { fetchUserSettings, saveUserSettings } from '../services/user'
 import { checkUser, register, login } from '../services/auth'
@@ -125,42 +126,32 @@ export function SettingsTab({
   return (
     <div className="space-y-3 pb-6">
       <h2 className="text-xl font-bold">Settings</h2>
-      {/* Mode Selection */}
-      <Card>
-        <CardHeader className="pb-2 space-y-1">
-          <CardTitle className="text-base">Mode</CardTitle>
-          <p className="text-sm text-muted-foreground">
-            Choose between advance and basic interfaces.
-          </p>
-        </CardHeader>
-        <CardContent className="pt-0">
+      <Card className="divide-y">
+        <SettingRow
+          label="Mode"
+          description="Choose between advance and basic interfaces."
+        >
           <Tabs
             value={uiMode}
             onValueChange={(v) => setUiMode(v as 'advance' | 'basic')}
-            className="w-full max-w-xs"
+            className="min-w-[9rem]"
           >
-            <TabsList className="grid w-full grid-cols-2">
+            <TabsList className="grid grid-cols-2 w-full">
               <TabsTrigger value="advance" className="flex items-center gap-1 py-1">
-                <Rocket className="w-4 h-4" />
+                <Rocket size={16} className="shrink-0" />
                 <span>Advance</span>
               </TabsTrigger>
               <TabsTrigger value="basic" className="flex items-center gap-1 py-1">
-                <Circle className="w-4 h-4" />
+                <Circle size={16} className="shrink-0" />
                 <span>Basic</span>
               </TabsTrigger>
             </TabsList>
           </Tabs>
-        </CardContent>
-      </Card>
-      {/* Theme Toggle */}
-      <Card>
-        <CardHeader className="pb-2 space-y-1">
-          <CardTitle className="text-base">Theme</CardTitle>
-          <p className="text-sm text-muted-foreground">
-            Switch between light and dark mode.
-          </p>
-        </CardHeader>
-        <CardContent className="pt-0">
+        </SettingRow>
+        <SettingRow
+          label="Theme"
+          description="Switch between light and dark mode."
+        >
           <Button
             variant="outline"
             size="sm"
@@ -169,108 +160,90 @@ export function SettingsTab({
           >
             {theme === 'light' ? (
               <>
-                <Moon className="w-4 h-4" />
+                <Moon size={16} className="shrink-0" />
                 <span>Dark</span>
               </>
             ) : (
               <>
-                <Sun className="w-4 h-4" />
+                <Sun size={16} className="shrink-0" />
                 <span>Light</span>
               </>
             )}
           </Button>
-        </CardContent>
-      </Card>
-      {/* Login */}
-      {uiMode === 'advance' && (
-      <Card>
-        <CardHeader className="pb-2 space-y-1">
-          <CardTitle className="text-base">Account</CardTitle>
-          <p className="text-sm text-muted-foreground">
-            Sync your favourite stations across devices by signing in with your email.
-          </p>
-        </CardHeader>
-        <CardContent className="pt-0">
-          {email ? (
-            <div className="space-y-2">
-              <div className="flex items-center justify-between gap-2">
-                <div className="flex items-center gap-2">
-                  <Avatar className="size-8">
-                    <AvatarFallback>
-                      {email ? email.charAt(0).toUpperCase() : <User className="w-4 h-4" />}
-                    </AvatarFallback>
-                  </Avatar>
-                  <span className="text-sm break-all">{email}</span>
-                </div>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={() => {
-                    setEmail('')
-                    setAuthToken('')
-                  }}
-                >
-                  Log out
-                </Button>
-              </div>
-              <div className="flex items-center justify-between gap-2">
-                <span className="text-sm text-muted-foreground">
-                  Last sync:{' '}
-                  {lastSync ? format(lastSync, 'PP p') : 'Never'}
-                </span>
-                <Button size="sm" onClick={handleSync}>
-                  Sync now
-                </Button>
-              </div>
+        </SettingRow>
+        {uiMode === 'advance' && (
+          <div className="px-4 py-3 space-y-2">
+            <div className="text-sm font-medium leading-none">Account</div>
+            <div className="text-xs text-muted-foreground">
+              Sync your favourite stations across devices by signing in with your email.
             </div>
-          ) : (
-            <form onSubmit={handleLogin} className="flex gap-2">
-              <Input
-                type="email"
-                placeholder="you@example.com"
-                value={emailInput}
-                onChange={(e) => setEmailInput(e.target.value)}
-                className="flex-1 text-base placeholder:text-base"
-              />
-              <Button type="submit" size="sm">Login</Button>
-            </form>
-          )}
-        </CardContent>
-      </Card>
-      )}
-      {/* Notification Settings */}
-      <Card>
-        <CardHeader className="pb-2 space-y-1">
-          <CardTitle className="text-base">Alerts</CardTitle>
-          <p className="text-sm text-muted-foreground">
-            Choose how many minutes before arrival you're notified.
-          </p>
-        </CardHeader>
-        <CardContent className="pt-0">
+            {email ? (
+              <div className="space-y-2">
+                <div className="flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-2">
+                    <Avatar className="w-[32px] h-[32px]">
+                      <AvatarFallback>
+                        {email ? email.charAt(0).toUpperCase() : <User size={16} className="shrink-0" />}
+                      </AvatarFallback>
+                    </Avatar>
+                    <span className="text-sm break-all">{email}</span>
+                  </div>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => {
+                      setEmail('')
+                      setAuthToken('')
+                    }}
+                  >
+                    Log out
+                  </Button>
+                </div>
+                <div className="flex items-center justify-between gap-2">
+                  <span className="text-sm text-muted-foreground">
+                    Last sync: {lastSync ? format(lastSync, 'PP p') : 'Never'}
+                  </span>
+                  <Button size="sm" onClick={handleSync}>
+                    Sync now
+                  </Button>
+                </div>
+              </div>
+            ) : (
+              <form onSubmit={handleLogin} className="flex gap-2">
+                <Input
+                  type="email"
+                  placeholder="you@example.com"
+                  value={emailInput}
+                  onChange={(e) => setEmailInput(e.target.value)}
+                  className="flex-1 text-base placeholder:text-base"
+                />
+                <Button type="submit" size="sm">Login</Button>
+              </form>
+            )}
+          </div>
+        )}
+        <SettingRow
+          label="Alerts"
+          description="Choose how many minutes before arrival you're notified."
+        >
           <div className="flex items-center gap-2">
-              <Slider
-                min={1}
-                max={10}
-                step={1}
-                value={[notifyMinutes]}
-                onValueChange={(v) => setNotifyMinutes(v[0])}
-                className="flex-1"
-              />
+            <Slider
+              min={1}
+              max={10}
+              step={1}
+              value={[notifyMinutes]}
+              onValueChange={(v) => setNotifyMinutes(v[0])}
+              className="w-32 sm:w-40"
+            />
             <span className="text-sm text-muted-foreground">
               {notifyMinutes} minute{notifyMinutes > 1 ? 's' : ''} before
             </span>
           </div>
-        </CardContent>
-      </Card>
-      {/* Font Size Settings */}
-      <Card>
-        <CardHeader className="pb-2 space-y-1">
-          <CardTitle className="text-base">Text Size</CardTitle>
-          <p className="text-sm text-muted-foreground">
-            Adjust how large or small text appears.
-          </p>
-        </CardHeader>
-        <CardContent className="pt-0">
+        </SettingRow>
+        <SettingRow
+          label="Text Size"
+          description="Adjust how large or small text appears."
+        >
           <div className="flex items-center gap-2">
             <Slider
               min={0}
@@ -278,13 +251,13 @@ export function SettingsTab({
               step={1}
               value={[fontSizeIndex]}
               onValueChange={(v) => setFontSize(fontSizeOptions[v[0]])}
-              className="flex-1"
+              className="w-32 sm:w-40"
             />
             <span className="text-sm text-muted-foreground">
               {fontSizeLabels[fontSizeIndex]}
             </span>
           </div>
-        </CardContent>
+        </SettingRow>
       </Card>
       {/* Station Configuration */}
       {uiMode === 'advance' && (
