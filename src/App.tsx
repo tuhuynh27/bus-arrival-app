@@ -36,6 +36,7 @@ const queryClient = new QueryClient({
 function AppContent() {
   const [activeTab, setActiveTab] = useState<TabType>('home');
   const [theme, setTheme] = useLocalStorage<Theme>('theme', 'light');
+  const [fontSize, setFontSize] = useLocalStorage<number>('fontSize', 16);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [stationConfigs, setStationConfigs] = useLocalStorage<StationConfig[]>('stationConfigs', [
     { stationId: '10389', busNumbers: ['121', '122'] },
@@ -66,6 +67,11 @@ function AppContent() {
   useEffect(() => {
     document.documentElement.classList.toggle('dark', theme === 'dark');
   }, [theme]);
+
+  // Apply font size
+  useEffect(() => {
+    document.documentElement.style.fontSize = `${fontSize}px`;
+  }, [fontSize]);
 
   // Show toast when going offline/online
   useEffect(() => {
@@ -132,6 +138,8 @@ function AppContent() {
             setStationConfigs={setStationConfigs}
             stopsData={stopsDataTyped}
             servicesData={servicesDataTyped}
+            fontSize={fontSize}
+            setFontSize={setFontSize}
           />
         );
       case 'notifications':
