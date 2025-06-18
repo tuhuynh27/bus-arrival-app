@@ -3,8 +3,9 @@ import { Card, CardHeader, CardTitle, CardContent } from './ui/card'
 import { Button } from './ui/button'
 import { Input } from './ui/input'
 import { Slider } from './ui/slider'
+import { Tabs, TabsList, TabsTrigger } from './ui/tabs'
 import { Avatar, AvatarFallback } from './ui/avatar'
-import { User } from 'lucide-react'
+import { User, Rocket, Circle } from 'lucide-react'
 import { PasscodeModal } from './PasscodeModal'
 import { toast } from 'sonner'
 import { format } from 'date-fns'
@@ -24,6 +25,8 @@ interface SettingsTabProps {
   servicesData: ServiceData;
   fontSize: number;
   setFontSize: (size: number) => void;
+  uiMode: 'advance' | 'basic';
+  setUiMode: (mode: 'advance' | 'basic') => void;
 }
 
 export function SettingsTab({
@@ -33,6 +36,8 @@ export function SettingsTab({
   servicesData,
   fontSize,
   setFontSize,
+  uiMode,
+  setUiMode,
 }: SettingsTabProps) {
   const [email, setEmail] = useLocalStorage<string>('userEmail', '')
   const [emailInput, setEmailInput] = useState(email)
@@ -116,7 +121,35 @@ export function SettingsTab({
   return (
     <div className="space-y-3 pb-6">
       <h2 className="text-xl font-bold">Settings</h2>
+      {/* Mode Selection */}
+      <Card>
+        <CardHeader className="pb-2 space-y-1">
+          <CardTitle className="text-base">Mode</CardTitle>
+          <p className="text-sm text-muted-foreground">
+            Choose between advance and basic interfaces.
+          </p>
+        </CardHeader>
+        <CardContent className="pt-0">
+          <Tabs
+            value={uiMode}
+            onValueChange={(v) => setUiMode(v as 'advance' | 'basic')}
+            className="w-full max-w-xs"
+          >
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="advance" className="flex items-center gap-1 py-1">
+                <Rocket className="w-4 h-4" />
+                <span>Advance</span>
+              </TabsTrigger>
+              <TabsTrigger value="basic" className="flex items-center gap-1 py-1">
+                <Circle className="w-4 h-4" />
+                <span>Basic</span>
+              </TabsTrigger>
+            </TabsList>
+          </Tabs>
+        </CardContent>
+      </Card>
       {/* Login */}
+      {uiMode === 'advance' && (
       <Card>
         <CardHeader className="pb-2 space-y-1">
           <CardTitle className="text-base">Account</CardTitle>
@@ -171,6 +204,7 @@ export function SettingsTab({
           )}
         </CardContent>
       </Card>
+      )}
       {/* Notification Settings */}
       <Card>
         <CardHeader className="pb-2 space-y-1">
@@ -220,12 +254,16 @@ export function SettingsTab({
         </CardContent>
       </Card>
       {/* Station Configuration */}
-      <StationConfigComponent
-        stationConfigs={stationConfigs}
-        onUpdateConfigs={setStationConfigs}
-        stopsData={stopsData}
-        servicesData={servicesData}
-      />
+      {uiMode === 'advance' && (
+        <StationConfigComponent
+          stationConfigs={stationConfigs}
+          onUpdateConfigs={setStationConfigs}
+          stopsData={stopsData}
+          servicesData={servicesData}
+          showAddStation
+          showStationCards
+        />
+      )}
       <PasscodeModal
         mode={modalMode || 'enter'}
         open={modalMode !== null && !!pendingEmail}

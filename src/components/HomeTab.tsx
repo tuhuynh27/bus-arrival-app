@@ -20,6 +20,8 @@ interface HomeTabProps {
   servicesData: ServiceData;
   stopsData: StopData;
   handleNotify: (bus: BusArrival) => void;
+  showRouteName: boolean;
+  showStationInfo: boolean;
 }
 
 export function StationCard({
@@ -28,12 +30,16 @@ export function StationCard({
   stopsData,
   onNotify,
   maxItems = Infinity,
+  showRouteName,
+  showStationInfo,
 }: {
   config: StationConfig;
   servicesData: ServiceData;
   stopsData: StopData;
   onNotify: (bus: BusArrival) => void;
   maxItems?: number;
+  showRouteName: boolean;
+  showStationInfo: boolean;
 }) {
   const [isExpanded, setIsExpanded] = useState(false);
   const { data: arrivals = [], isLoading, error } = useQuery<BusArrival[]>({
@@ -67,16 +73,18 @@ export function StationCard({
               {getStationDisplayName(config.stationId)}
             </CardTitle>
           </div>
-          <div className="flex items-center gap-2 flex-shrink-0">
-            {arrivals.length > 0 && (
-              <Badge variant="secondary" className="text-xs">
-                {arrivals.length}
+          {showStationInfo && (
+            <div className="flex items-center gap-2 flex-shrink-0">
+              {arrivals.length > 0 && (
+                <Badge variant="secondary" className="text-xs">
+                  {arrivals.length}
+                </Badge>
+              )}
+              <Badge variant="outline" className="text-xs">
+                {config.stationId}
               </Badge>
-            )}
-            <Badge variant="outline" className="text-xs">
-              {config.stationId}
-            </Badge>
-          </div>
+            </div>
+          )}
         </div>
       </CardHeader>
       <CardContent className="pt-0">
@@ -96,7 +104,7 @@ export function StationCard({
               <BusArrivalCard
                 key={`${bus.busNo}-${busIndex}`}
                 bus={bus}
-                routeName={servicesData[bus.busNo]?.name}
+                routeName={showRouteName ? servicesData[bus.busNo]?.name : undefined}
                 onNotify={onNotify}
               />
             ))}
@@ -150,6 +158,8 @@ export function HomeTab({
   servicesData,
   stopsData,
   handleNotify,
+  showRouteName,
+  showStationInfo,
 }: HomeTabProps) {
   return (
     <div className="space-y-3 pb-6">
@@ -213,6 +223,8 @@ export function HomeTab({
               servicesData={servicesData}
               stopsData={stopsData}
               onNotify={handleNotify}
+              showRouteName={showRouteName}
+              showStationInfo={showStationInfo}
             />
           ))}
         </div>

@@ -8,6 +8,8 @@ const props = {
   servicesData: {},
   fontSize: 16,
   setFontSize: () => {},
+  uiMode: 'advance' as const,
+  setUiMode: () => {},
 }
 
 describe('SettingsTab', () => {

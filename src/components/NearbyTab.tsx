@@ -8,9 +8,11 @@ interface NearbyTabProps {
   stopsData: StopData
   servicesData: ServiceData
   handleNotify: (bus: BusArrival) => void
+  showRouteName: boolean
+  showStationInfo: boolean
 }
 
-export function NearbyTab({ stopsData, servicesData, handleNotify }: NearbyTabProps) {
+export function NearbyTab({ stopsData, servicesData, handleNotify, showRouteName, showStationInfo }: NearbyTabProps) {
   const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(null)
   const [error, setError] = useState<string | null>(null)
 
@@ -99,6 +101,8 @@ export function NearbyTab({ stopsData, servicesData, handleNotify }: NearbyTabPr
           stopsData={stopsData}
           onNotify={handleNotify}
           maxItems={8}
+          showRouteName={showRouteName}
+          showStationInfo={showStationInfo}
         />
       ))}
     </div>

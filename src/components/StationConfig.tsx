@@ -39,6 +39,8 @@ interface StationConfigProps {
   onUpdateConfigs: (configs: StationConfig[]) => void;
   stopsData: StopData;
   servicesData: ServiceData;
+  showAddStation?: boolean;
+  showStationCards?: boolean;
 }
 
 function SortableStationCard({
@@ -75,11 +77,13 @@ function SortableStationCard({
   );
 }
 
-export function StationConfigComponent({ 
-  stationConfigs, 
-  onUpdateConfigs, 
-  stopsData, 
-  servicesData 
+export function StationConfigComponent({
+  stationConfigs,
+  onUpdateConfigs,
+  stopsData,
+  servicesData,
+  showAddStation = true,
+  showStationCards = true,
 }: StationConfigProps) {
   const [newStationInput, setNewStationInput] = useState('');
   const [stationSuggestions, setStationSuggestions] = useState<StationSuggestion[]>([]);
@@ -253,56 +257,59 @@ export function StationConfigComponent({
 
   return (
     <div className="space-y-6">
-      <Card>
-        <CardHeader className="space-y-1">
-          <CardTitle className="flex items-center">
-            <Plus className="mr-2 w-5 h-5" />
-            Add Bus Station
-          </CardTitle>
-          <p className="text-sm text-muted-foreground">
-            Nearby stops will be suggested using your location. Please allow access.
-          </p>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={addStation} className="flex gap-2 relative">
-            <div className="relative flex-1">
-              <Input
-                placeholder="Enter Station ID or Name"
-                value={newStationInput}
-                onChange={(e) => handleStationInputChange(e.target.value)}
-                onFocus={handleStationInputFocus}
-                onBlur={() => {
-                  setTimeout(() => {
-                    setStationSuggestions([])
-                  }, 100)
-                }}
-                className="text-base placeholder:text-base"
-              />
-              {stationSuggestions.length > 0 && (
-                <div className="absolute top-full left-0 w-full bg-background border border-border rounded-md shadow-lg z-10 max-h-48 overflow-y-auto">
-                  {stationSuggestions.map((suggestion, index) => (
-                    <div
-                      key={index}
-                      className="p-3 hover:bg-accent cursor-pointer text-sm border-b border-border/50 last:border-b-0"
-                      onClick={() => handleStationSelect(suggestion)}
-                    >
-                      <div className="font-medium text-foreground">{suggestion.name}</div>
-                      <div className="text-xs text-muted-foreground">{suggestion.road} • {suggestion.stationId}</div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-            <Button type="submit" size="sm">
-              <Plus className="w-4 h-4" />
-            </Button>
-          </form>
-        </CardContent>
-      </Card>
+      {showAddStation !== false && (
+        <Card>
+          <CardHeader className="space-y-1">
+            <CardTitle className="flex items-center">
+              <Plus className="mr-2 w-5 h-5" />
+              Add Bus Station
+            </CardTitle>
+            <p className="text-sm text-muted-foreground">
+              Nearby stops will be suggested using your location. Please allow access.
+            </p>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={addStation} className="flex gap-2 relative">
+              <div className="relative flex-1">
+                <Input
+                  placeholder="Enter Station ID or Name"
+                  value={newStationInput}
+                  onChange={(e) => handleStationInputChange(e.target.value)}
+                  onFocus={handleStationInputFocus}
+                  onBlur={() => {
+                    setTimeout(() => {
+                      setStationSuggestions([])
+                    }, 100)
+                  }}
+                  className="text-base placeholder:text-base"
+                />
+                {stationSuggestions.length > 0 && (
+                  <div className="absolute top-full left-0 w-full bg-background border border-border rounded-md shadow-lg z-10 max-h-48 overflow-y-auto">
+                    {stationSuggestions.map((suggestion, index) => (
+                      <div
+                        key={index}
+                        className="p-3 hover:bg-accent cursor-pointer text-sm border-b border-border/50 last:border-b-0"
+                        onClick={() => handleStationSelect(suggestion)}
+                      >
+                        <div className="font-medium text-foreground">{suggestion.name}</div>
+                        <div className="text-xs text-muted-foreground">{suggestion.road} • {suggestion.stationId}</div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+              <Button type="submit" size="sm">
+                <Plus className="w-4 h-4" />
+              </Button>
+            </form>
+          </CardContent>
+        </Card>
+      )}
 
-      <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-        <SortableContext items={stationConfigs.map((s) => s.stationId)} strategy={verticalListSortingStrategy}>
-          {stationConfigs.map((config) => {
+      {showStationCards !== false && (
+        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+          <SortableContext items={stationConfigs.map((s) => s.stationId)} strategy={verticalListSortingStrategy}>
+            {stationConfigs.map((config) => {
             const availableBuses = stationToBusNumbers[config.stationId] || [];
 
             return (
@@ -387,9 +394,10 @@ export function StationConfigComponent({
                 )}
               </SortableStationCard>
             );
-          })}
-        </SortableContext>
-      </DndContext>
+            })}
+          </SortableContext>
+        </DndContext>
+      )}
     </div>
   );
 } 
