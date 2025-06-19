@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
@@ -42,12 +42,49 @@ export function StationCard({
   showStationInfo: boolean;
 }) {
   const [isExpanded, setIsExpanded] = useState(false);
+  const [displayArrivals, setDisplayArrivals] = useState<BusArrival[]>([]);
   const { data: arrivals = [], isLoading, error } = useQuery<BusArrival[]>({
     queryKey: ['busArrivals', config.stationId, config.busNumbers],
     queryFn: () => fetchBusArrivals(config.stationId, config.busNumbers),
     enabled: config.busNumbers.length > 0,
     refetchInterval: 30000, // 30 seconds
   });
+
+  // Merge new arrivals with existing ones while keeping recently arrived buses
+  useEffect(() => {
+    setDisplayArrivals(prev => {
+      const now = Date.now();
+      // Retain buses that arrived within the last 2 minutes
+      const recentArrived = prev.filter(
+        b => b.arrivalTimestamp <= now && now - b.arrivalTimestamp <= 120000
+      );
+
+      // Combine fresh arrivals with recently arrived ones
+      const all = [...arrivals, ...recentArrived];
+      const seen = new Set<string>();
+      const unique = all.filter(b => {
+        const key = `${b.busNo}-${b.arrivalTimestamp}`;
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      });
+
+      return unique.sort((a, b) => a.arrivalTimestamp - b.arrivalTimestamp);
+    });
+  }, [arrivals]);
+
+  // Periodically remove buses that have been arrived for over 2 minutes
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setDisplayArrivals(prev => {
+        const now = Date.now();
+        return prev.filter(
+          b => !(b.arrivalTimestamp <= now && now - b.arrivalTimestamp > 120000)
+        );
+      });
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
 
   const getStationDisplayName = (stationId: string) => {
     const stop = stopsData[stationId];
@@ -60,9 +97,9 @@ export function StationCard({
   // Determine which buses to show
   const maxVisible = 3;
   const visibleArrivals = isExpanded
-    ? arrivals.slice(0, maxItems)
-    : arrivals.slice(0, maxVisible);
-  const hasMore = arrivals.length > maxVisible;
+    ? displayArrivals.slice(0, maxItems)
+    : displayArrivals.slice(0, maxVisible);
+  const hasMore = displayArrivals.length > maxVisible;
 
   return (
     <Card>
@@ -75,9 +112,9 @@ export function StationCard({
           </div>
           {showStationInfo && (
             <div className="flex items-center gap-2 flex-shrink-0">
-              {arrivals.length > 0 && (
+              {displayArrivals.length > 0 && (
                 <Badge variant="secondary" className="text-xs">
-                  {arrivals.length}
+                  {displayArrivals.length}
                 </Badge>
               )}
               <Badge variant="outline" className="text-xs">
@@ -98,7 +135,7 @@ export function StationCard({
               Failed to load bus arrivals
             </p>
           </div>
-        ) : arrivals.length > 0 ? (
+        ) : displayArrivals.length > 0 ? (
           <div className="space-y-2">
             {visibleArrivals.map((bus, busIndex) => (
               <BusArrivalCard
@@ -129,7 +166,7 @@ export function StationCard({
                       <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                       </svg>
-                      Show {Math.min(arrivals.length, maxItems) - maxVisible} More
+                      Show {Math.min(displayArrivals.length, maxItems) - maxVisible} More
                     </>
                   )}
                 </Button>
