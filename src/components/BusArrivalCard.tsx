@@ -31,11 +31,11 @@ export function BusArrivalCard({ bus, routeName, onNotify }: BusArrivalCardProps
   
   const getTimeStatus = () => {
     if (isArrived) {
-      if (timePassedSinceArrival < 60000) { // Less than 1 minute ago
-        return `Arrived ${seconds}s ago`;
-      } else {
-        return `Arrived ${minutes}m ago`;
+      const sinceSeconds = Math.floor(timePassedSinceArrival / 1000);
+      if (sinceSeconds < 120) {
+        return `Arrived ${sinceSeconds}s ago`;
       }
+      return 'Arrived';
     } else {
       return minutes === 0 ? `${seconds}s` : `${minutes}m ${seconds}s`;
     }
