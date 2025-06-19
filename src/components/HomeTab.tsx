@@ -54,25 +54,23 @@ export function StationCard({
   useEffect(() => {
     setDisplayArrivals(prev => {
       const now = Date.now();
-      // Keep buses that either haven't arrived yet or arrived within last 2 mins
-      const filteredPrev = prev.filter(b => {
-        if (b.arrivalTimestamp <= now) {
-          return now - b.arrivalTimestamp <= 120000;
-        }
-        return true;
-      });
+      // Preserve buses that have arrived within the last 2 minutes
+      const arrivedPrev = prev.filter(
+        b => b.arrivalTimestamp <= now && now - b.arrivalTimestamp <= 120000
+      );
 
-      const combined = [...filteredPrev];
-      arrivals.forEach(b => {
-        const exists = combined.some(
-          ob => ob.busNo === b.busNo && ob.arrivalTimestamp === b.arrivalTimestamp
-        );
-        if (!exists) {
-          combined.push(b);
-        }
-      });
+      const combined = [...arrivedPrev, ...arrivals];
 
-      return combined.sort((a, b) => a.arrivalTimestamp - b.arrivalTimestamp);
+      // Remove any duplicates that may appear
+      const deduped = combined.filter(
+        (bus, index, self) =>
+          index ===
+          self.findIndex(
+            b => b.busNo === bus.busNo && b.arrivalTimestamp === bus.arrivalTimestamp
+          )
+      );
+
+      return deduped.sort((a, b) => a.arrivalTimestamp - b.arrivalTimestamp);
     });
   }, [arrivals]);
 
